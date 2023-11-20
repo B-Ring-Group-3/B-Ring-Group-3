@@ -5,13 +5,13 @@ Group members: Jon Nelson, Seongki Lee, Carter Nelson, Zoe Downen, Shannon Bell
 CS 461
 
 Contents of the document:
-Principles
-Process
-Roles
-Tooling
-Definition of Done (DoD)
-Release Cycle
-Environments
+Principles, 
+Process, 
+Roles, 
+Tooling, 
+Definition of Done (DoD), 
+Release Cycle, 
+Environments.
 
 ##
 # **Principles**

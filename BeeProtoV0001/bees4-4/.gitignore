@@ -8,5 +8,3 @@
 /.packages
 /ios/Podfile
 /pubspec.lock
-
-*.env

@@ -7,4 +7,3 @@
 /.flutter-plugins-dependencies
 /.packages
 /ios/Podfile
-/pubspec.lock

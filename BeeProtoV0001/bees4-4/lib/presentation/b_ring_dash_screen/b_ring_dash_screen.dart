@@ -16,18 +16,18 @@ class BRingDashScreen extends StatelessWidget {
         appBar: _buildAppBar(context),
         body: Container(
           width: double.maxFinite,
-          padding: EdgeInsets.symmetric(horizontal: 87.h, vertical: 4.v),
+          padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 4.v),
           child: ListView(
             padding: const EdgeInsets.all(8),
             children: <Widget>[
-              _alerts(context),
-              SizedBox(height: 8.v),
-              _sensors(context),
-              SizedBox(height: 3.v),
-              _graphs(context),
-              SizedBox(height: 5.v)
+              Center(child: _alerts(context)),
+              Center(child: SizedBox(height: 8.v)),
+              Center(child: _sensors(context)),
+              Center(child: SizedBox(height: 5.v)),
+              Center(child: _graphs(context)),
+              Center(child: SizedBox(height: 5.v))
             ],
-          ),
+          )
         ),
         bottomNavigationBar: _buildBack(context),
       ),
@@ -84,20 +84,22 @@ class BRingDashScreen extends StatelessWidget {
           ),
         ),
       ),
-      Container(
+      InkWell(
+        child: Container(
           height: 180.adaptSize,
           width: 180.adaptSize,
           padding: EdgeInsets.all(46.h),
-          decoration: AppDecoration.fillBlack
+          decoration: AppDecoration.outlineBlack900
               .copyWith(borderRadius: BorderRadiusStyle.roundedBorder30),
           child: CustomImageView(
               imagePath: ImageConstant.imgWarning,
               height: 88.adaptSize,
               width: 88.adaptSize,
               alignment: Alignment.center,
-              onTap: () {
-                gotoAlerts(context);
-              }))
+            )
+          ),
+        onTap: () { gotoAlerts(context); }
+      )
     ]);
   }
 
@@ -124,7 +126,8 @@ class BRingDashScreen extends StatelessWidget {
           ),
         ),
       ),
-      Container(
+      InkWell(
+        child: Container(
           height: 180.adaptSize,
           width: 180.adaptSize,
           padding: EdgeInsets.symmetric(horizontal: 45.h, vertical: 37.v),
@@ -135,9 +138,10 @@ class BRingDashScreen extends StatelessWidget {
               height: 105.v,
               width: 90.h,
               alignment: Alignment.center,
-              onTap: () {
-                gotoSensors(context);
-              }))
+            )
+          ),
+        onTap: () { gotoSensors(context); }
+      )
     ]);
   }
 
@@ -165,20 +169,21 @@ class BRingDashScreen extends StatelessWidget {
         ),
       ),
       SizedBox(height: 4.v),
-      Container(
+      InkWell(
+        child: Container(
           height: 180.adaptSize,
           width: 180.adaptSize,
           padding: EdgeInsets.all(26.h),
-          decoration: AppDecoration.fillBlack
+          decoration: AppDecoration.outlineBlack900
               .copyWith(borderRadius: BorderRadiusStyle.roundedBorder30),
           child: CustomImageView(
-              imagePath: ImageConstant.imgIconDotted,
-              height: 126.adaptSize,
-              width: 126.adaptSize,
-              alignment: Alignment.center,
-              onTap: () {
-                gotoGraphs(context);
-              }))
+            imagePath: ImageConstant.imgIconDotted,
+            height: 126.adaptSize,
+            width: 126.adaptSize,
+            alignment: Alignment.center,
+          )),
+        onTap: () { gotoGraphs(context); },
+      )
     ]);
   }
 

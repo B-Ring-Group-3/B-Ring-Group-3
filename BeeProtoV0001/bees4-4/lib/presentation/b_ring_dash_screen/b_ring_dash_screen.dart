@@ -98,9 +98,7 @@ class BRingDashScreen extends StatelessWidget {
               alignment: Alignment.center,
             )
           ),
-        onTap: () {
-          gotoAlerts(context);
-        }
+        onTap: () { gotoAlerts(context); }
       )
     ]);
   }
@@ -142,9 +140,7 @@ class BRingDashScreen extends StatelessWidget {
               alignment: Alignment.center,
             )
           ),
-        onTap: () {
-          gotoSensors(context);
-        }
+        onTap: () { gotoSensors(context); }
       )
     ]);
   }
@@ -186,9 +182,7 @@ class BRingDashScreen extends StatelessWidget {
             width: 126.adaptSize,
             alignment: Alignment.center,
           )),
-        onTap: () {
-          gotoGraphs(context);
-        },
+        onTap: () { gotoGraphs(context); },
       )
     ]);
   }

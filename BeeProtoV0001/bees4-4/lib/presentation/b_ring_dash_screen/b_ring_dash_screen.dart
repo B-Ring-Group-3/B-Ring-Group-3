@@ -16,119 +16,18 @@ class BRingDashScreen extends StatelessWidget {
         appBar: _buildAppBar(context),
         body: Container(
           width: double.maxFinite,
-          padding: EdgeInsets.symmetric(horizontal: 87.h, vertical: 4.v),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-               Padding(
-  padding: EdgeInsets.only(left: 35.h),
-  child: Text(
-    "Alerts",
-    style: CustomTextStyles.headlineLargeBlack900.copyWith(
-      foreground: Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0
-        ..color = Colors.black.withOpacity(1), // Adjust the color and strokeWidth as needed
-      shadows: [
-        Shadow(
-          color:  Color(0xFFFFD233),
-          offset: Offset(0, 2),
-          blurRadius: 4,
-        ),
-      ],
-      //color: Color(0xFFFFD233),
-    ),
-  ),
-),
-                      Container(
-                          height: 180.adaptSize,
-                          width: 180.adaptSize,
-                          padding: EdgeInsets.all(46.h),
-                          decoration: AppDecoration.fillBlack.copyWith(
-                              borderRadius: BorderRadiusStyle.roundedBorder30),
-                          child: CustomImageView(
-                              imagePath: ImageConstant.imgWarning,
-                              height: 88.adaptSize,
-                              width: 88.adaptSize,
-                              alignment: Alignment.center,
-                              onTap: () {
-                                gotoAlerts(context);
-                              })),
-                      SizedBox(height: 8.v),
-                      Padding(
-  padding: EdgeInsets.only(left: 20.h),
-  child: Text(
-    "Sensors",
-    style: CustomTextStyles.headlineLargeBlack900.copyWith(
-      foreground: Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0
-        ..color = Colors.black.withOpacity(1), // Adjust the color and strokeWidth as needed
-      shadows: [
-        Shadow(
-          color:  Color(0xFFFFD233),
-          offset: Offset(0, 2),
-          blurRadius: 4,
-        ),
-      ],
-      //color: Color(0xFFFFD233),
-    ),
-  ),
-),
-                      Container(
-                          height: 180.adaptSize,
-                          width: 180.adaptSize,
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 45.h, vertical: 37.v),
-                          decoration: AppDecoration.outlineBlack900.copyWith(
-                              borderRadius: BorderRadiusStyle.roundedBorder30),
-                          child: CustomImageView(
-                              imagePath: ImageConstant.imgVector,
-                              height: 105.v,
-                              width: 90.h,
-                              alignment: Alignment.center,
-                              onTap: () {
-                                gotoSensors(context);
-                              })),
-                      SizedBox(height: 3.v),
-                       Padding(
-  padding: EdgeInsets.only(left: 30.h),
-  child: Text(
-    "Graphs",
-    style: CustomTextStyles.headlineLargeBlack900.copyWith(
-      foreground: Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.0
-        ..color = Colors.black.withOpacity(1), // Adjust the color and strokeWidth as needed
-      shadows: [
-        Shadow(
-          color:  Color(0xFFFFD233),
-          offset: Offset(0, 2),
-          blurRadius: 4,
-        ),
-      ],
-      //color: Color(0xFFFFD233),
-    ),
-  ),
-),
-                      SizedBox(height: 4.v),
-                      Container(
-                          height: 180.adaptSize,
-                          width: 180.adaptSize,
-                          padding: EdgeInsets.all(26.h),
-                          decoration: AppDecoration.fillBlack.copyWith(
-                              borderRadius: BorderRadiusStyle.roundedBorder30),
-                          child: CustomImageView(
-                              imagePath: ImageConstant.imgIconDotted,
-                              height: 126.adaptSize,
-                              width: 126.adaptSize,
-                              alignment: Alignment.center,
-                              onTap: () {
-                                gotoGraphs(context);
-                              })),
-                      SizedBox(height: 5.v)
+          padding: EdgeInsets.symmetric(horizontal: 15.h, vertical: 4.v),
+          child: ListView(
+            padding: const EdgeInsets.all(8),
+            children: <Widget>[
+              Center(child: _alerts(context)),
+              Center(child: SizedBox(height: 8.v)),
+              Center(child: _sensors(context)),
+              Center(child: SizedBox(height: 5.v)),
+              Center(child: _graphs(context)),
+              Center(child: SizedBox(height: 5.v))
             ],
-          ),
+          )
         ),
         bottomNavigationBar: _buildBack(context),
       ),
@@ -141,10 +40,10 @@ class BRingDashScreen extends StatelessWidget {
       title: Row(
         children: [
           Spacer(),
-          
+
           AppbarSubtitle(text: "Dashboard"),
-         Spacer(),
-        
+          Spacer(),
+
           SizedBox(width: 20), // Add some spacing between title and dropdown
           DropdownMenuExample(), // Add the dropdown menu here
         ],
@@ -160,6 +59,132 @@ class BRingDashScreen extends StatelessWidget {
         gotoLogin(context);
       },
     );
+  }
+
+  Widget _alerts(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: EdgeInsets.only(left: 35.h),
+        child: Text(
+          "Alerts",
+          style: CustomTextStyles.headlineLargeBlack900.copyWith(
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.0
+              ..color = Colors.black
+                  .withOpacity(1), // Adjust the color and strokeWidth as needed
+            shadows: [
+              Shadow(
+                color: Color(0xFFFFD233),
+                offset: Offset(0, 2),
+                blurRadius: 4,
+              ),
+            ],
+            //color: Color(0xFFFFD233),
+          ),
+        ),
+      ),
+      InkWell(
+        child: Container(
+          height: 180.adaptSize,
+          width: 180.adaptSize,
+          padding: EdgeInsets.all(46.h),
+          decoration: AppDecoration.outlineBlack900
+              .copyWith(borderRadius: BorderRadiusStyle.roundedBorder30),
+          child: CustomImageView(
+              imagePath: ImageConstant.imgWarning,
+              height: 88.adaptSize,
+              width: 88.adaptSize,
+              alignment: Alignment.center,
+            )
+          ),
+        onTap: () { gotoAlerts(context); }
+      )
+    ]);
+  }
+
+  Widget _sensors(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: EdgeInsets.only(left: 20.h),
+        child: Text(
+          "Sensors",
+          style: CustomTextStyles.headlineLargeBlack900.copyWith(
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.0
+              ..color = Colors.black
+                  .withOpacity(1), // Adjust the color and strokeWidth as needed
+            shadows: [
+              Shadow(
+                color: Color(0xFFFFD233),
+                offset: Offset(0, 2),
+                blurRadius: 4,
+              ),
+            ],
+            //color: Color(0xFFFFD233),
+          ),
+        ),
+      ),
+      InkWell(
+        child: Container(
+          height: 180.adaptSize,
+          width: 180.adaptSize,
+          padding: EdgeInsets.symmetric(horizontal: 45.h, vertical: 37.v),
+          decoration: AppDecoration.outlineBlack900
+              .copyWith(borderRadius: BorderRadiusStyle.roundedBorder30),
+          child: CustomImageView(
+              imagePath: ImageConstant.imgVector,
+              height: 105.v,
+              width: 90.h,
+              alignment: Alignment.center,
+            )
+          ),
+        onTap: () { gotoSensors(context); }
+      )
+    ]);
+  }
+
+  Widget _graphs(BuildContext context) {
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Padding(
+        padding: EdgeInsets.only(left: 30.h),
+        child: Text(
+          "Graphs",
+          style: CustomTextStyles.headlineLargeBlack900.copyWith(
+            foreground: Paint()
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 1.0
+              ..color = Colors.black
+                  .withOpacity(1), // Adjust the color and strokeWidth as needed
+            shadows: [
+              Shadow(
+                color: Color(0xFFFFD233),
+                offset: Offset(0, 2),
+                blurRadius: 4,
+              ),
+            ],
+            //color: Color(0xFFFFD233),
+          ),
+        ),
+      ),
+      SizedBox(height: 4.v),
+      InkWell(
+        child: Container(
+          height: 180.adaptSize,
+          width: 180.adaptSize,
+          padding: EdgeInsets.all(26.h),
+          decoration: AppDecoration.outlineBlack900
+              .copyWith(borderRadius: BorderRadiusStyle.roundedBorder30),
+          child: CustomImageView(
+            imagePath: ImageConstant.imgIconDotted,
+            height: 126.adaptSize,
+            width: 126.adaptSize,
+            alignment: Alignment.center,
+          )),
+        onTap: () { gotoGraphs(context); },
+      )
+    ]);
   }
 
   void gotoAlerts(BuildContext context) {
@@ -181,24 +206,22 @@ class BRingDashScreen extends StatelessWidget {
 
 const List<String> list = <String>['Hive 1', 'Hive 2', 'Hive 3', 'Add Hive'];
 
-
 ///class DropdownMenuApp extends StatelessWidget {
 ///  const DropdownMenuApp({super.key});
 
- /// @override
- /// Widget build(BuildContext context) {
- ///   return MaterialApp(
-   ///   theme: ThemeData(useMaterial3: true),
-    ///  home: Scaffold(
-    ///    appBar: AppBar(title: const Text('DropdownMenu Sample')),
-    ///    body: const Center(
-    ///      child: DropdownMenuExample(),
-   ///     ),
-  ///    ),
-  ///  );
- /// }
+/// @override
+/// Widget build(BuildContext context) {
+///   return MaterialApp(
+///   theme: ThemeData(useMaterial3: true),
+///  home: Scaffold(
+///    appBar: AppBar(title: const Text('DropdownMenu Sample')),
+///    body: const Center(
+///      child: DropdownMenuExample(),
+///     ),
+///    ),
+///  );
+/// }
 ///}
-
 
 class DropdownMenuExample extends StatefulWidget {
   const DropdownMenuExample({super.key});

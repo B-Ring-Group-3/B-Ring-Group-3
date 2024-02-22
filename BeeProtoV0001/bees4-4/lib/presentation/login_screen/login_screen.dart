@@ -1,145 +1,67 @@
 import 'package:bees4/core/app_export.dart';
+import 'package:bees4/main.dart';
 import 'package:bees4/widgets/custom_outlined_button.dart';
 import 'package:bees4/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+import 'package:flutterfire_ui/auth.dart';
 
 // ignore_for_file: must_be_immutable
 class LoginScreen extends StatelessWidget {
-  LoginScreen({Key? key}) : super(key: key);
-
-  TextEditingController enterhereController = TextEditingController();
-
-  TextEditingController enterhereController1 = TextEditingController();
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    mediaQueryData = MediaQuery.of(context);
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: theme.colorScheme.secondaryContainer,
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          width: double.maxFinite,
-          padding: EdgeInsets.only(left: 37.h, top: 65.v, right: 37.h),
-          child: Column(
-            children: [
-              _title(context),
-              SizedBox(height: 68.v),
-              _username(context),
-              SizedBox(height: 68.v),
-              _password(context),
-              SizedBox(height: 78.v),
-              _login(context),
-              SizedBox(height: 5.v)
-            ]
-          )
-        )
-      )
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return SignInScreen(
+              subtitleBuilder: (context, action) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    action == AuthAction.signIn
+                        ? 'Welcome to Bee Ring! Please sign in to continue.'
+                        : 'Welcome to Bee Ring! Please create an account to continue',
+                  ),
+                );
+              },
+              headerBuilder: (context, constraints, _) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: CustomImageView(
+                        imagePath: ImageConstant.imgTwemojiHoneybee,
+                        height: 103.v,
+                        width: 109.h,
+                        alignment: Alignment.center,
+                        //margin: EdgeInsets.only(left: 91.h)
+                    )
+                  ),
+                );
+              },
+              providerConfigs: [
+                EmailProviderConfiguration(),
+                GoogleProviderConfiguration(
+                  clientId: '210411111773-eajqijf8n77q4ndmu2c7goiehv2nkolj.apps.googleusercontent.com',
+                )
+              ]
+          );
+        }
+        else{
+          Future.microtask(() =>
+              Navigator.of(context).pushReplacementNamed(AppRoutes.bRingDashScreen));
+          // Return a placeholder widget to satisfy the builder function.
+          // This widget is temporary and won't be visible to the user due to the navigation.
+          return Container();
+        }
+
+        // Render your application if authenticated
+        return MyApp();
+      },
     );
-  }
-
-  Widget _title(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: AppDecoration.outlineBlack,
-          child: Text(
-            "The Bee Ring",
-            style: theme.textTheme.displayMedium?.copyWith(
-              shadows: [
-                Shadow(
-                  color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-                  offset: Offset(0, 2), // Adjust the offset based on your design
-                  blurRadius: 4, // Adjust the blur radius based on your design
-                ),
-              ],
-            ),
-          ),
-        ),
-        CustomImageView(
-          imagePath: ImageConstant.imgTwemojiHoneybee,
-          height: 103.v,
-          width: 109.h,
-          alignment: Alignment.centerLeft,
-          margin: EdgeInsets.only(left: 91.h)
-        )
-      ]
-    );
-  }
-
-  Widget _username(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: AppDecoration.outlineBlack,
-          child: Text(
-            "Username",
-            style: theme.textTheme.headlineLarge?.copyWith(
-              shadows: [
-                Shadow(
-                  color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-                  offset: Offset(0, 2), // Adjust the offset based on your design
-                  blurRadius: 4, // Adjust the blur radius based on your design
-                ),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 28.h, right: 23.h),
-          child: CustomTextFormField(
-            controller: enterhereController,
-            hintText: "enter here",
-            autofocus: false,
-          )
-        ),
-      ],
-    );
-  }
-
-  Widget _password(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: AppDecoration.outlineBlack,
-          child: Text(
-            "Password",
-            style: theme.textTheme.headlineLarge?.copyWith(
-              shadows: [
-                Shadow(
-                  color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-                  offset: Offset(0, 2), // Adjust the offset based on your design
-                  blurRadius: 4, // Adjust the blur radius based on your design
-                ),
-              ],
-            ),
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(left: 28.h, right: 23.h),
-          child: CustomTextFormField(
-            controller: enterhereController1,
-            hintText: "enter here",
-            textInputAction: TextInputAction.done,
-            autofocus: false,
-          )
-        ),
-      ],
-    );
-  }
-
-  Widget _login(BuildContext context) {
-    return CustomOutlinedButton(
-      width: 161.h,
-      text: "Login",
-      margin: EdgeInsets.only(left: 65.h),
-      onPressed: () { gotoDash(context); },
-      alignment: Alignment.centerLeft,
-      );
-  }
-
-  /// Navigates to the bRingDashScreen when the action is triggered.
-  gotoDash(BuildContext context) {
-    Navigator.popAndPushNamed(context, AppRoutes.bRingDashScreen);
   }
 }

@@ -5,6 +5,7 @@ import 'package:bees4/widgets/app_bar/appbar_subtitle.dart';
 import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BRingDashScreen extends StatelessWidget {
   const BRingDashScreen({Key? key}) : super(key: key);
@@ -54,10 +55,11 @@ class BRingDashScreen extends StatelessWidget {
 
   Widget _buildBack(BuildContext context) {
     return CustomElevatedButton(
-      text: "Back",
-      onPressed: () {
-        gotoLogin(context);
-      },
+        text: "Sign Out",
+        onPressed: () async {
+          await FirebaseAuth.instance.signOut();
+          Navigator.of(context).pushReplacementNamed(AppRoutes.loginScreen);
+        },
     );
   }
 

@@ -1,3 +1,4 @@
+import 'package:bees4/presentation/register_page_screen/register_page_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:bees4/presentation/login_screen/login_screen.dart';
 import 'package:bees4/presentation/b_ring_dash_screen/b_ring_dash_screen.dart';
@@ -19,8 +20,11 @@ class AppRoutes {
 
   static const String appNavigationScreen = '/app_navigation_screen';
 
+  static const String registerScreen = '/register_screen';
+
   static Map<String, WidgetBuilder> routes = {
     loginScreen: (context) => LoginScreen(),
+    registerScreen: (context) => RegisterScreen(),
     bRingDashScreen: (context) => BRingDashScreen(),
     sensorPageScreen: (context) => SensorPageScreen(),
     alertPageScreen: (context) => AlertPageScreen(),

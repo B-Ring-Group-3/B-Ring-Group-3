@@ -1,1 +1,0 @@
- C:\\Users\\jnel2\\OneDrive\\Documents\\flutter_windows_3.13.9-stable\\bees4-4\\.dart_tool\\flutter_build\\441cc00d633379660ab5f29f8b760eb4\\native_assets.yaml: 

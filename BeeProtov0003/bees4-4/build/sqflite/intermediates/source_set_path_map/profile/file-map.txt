@@ -1,0 +1,12 @@
+com.tekartik.sqflite-jetified-window-java-1.0.0-beta04-0 C:\Users\jnel2\.gradle\caches\transforms-3\08a794a3f2f3970abb63093256f3a7ff\transformed\jetified-window-java-1.0.0-beta04\res
+com.tekartik.sqflite-jetified-window-1.0.0-beta04-1 C:\Users\jnel2\.gradle\caches\transforms-3\6f3c94bc7e415994af128d830fc65f80\transformed\jetified-window-1.0.0-beta04\res
+com.tekartik.sqflite-jetified-annotation-experimental-1.1.0-2 C:\Users\jnel2\.gradle\caches\transforms-3\8e2f9490fefd6c9168cbe28b58d6d5ff\transformed\jetified-annotation-experimental-1.1.0\res
+com.tekartik.sqflite-core-1.6.0-3 C:\Users\jnel2\.gradle\caches\transforms-3\aaab9055df4bcc213684bd8c9a4ce85d\transformed\core-1.6.0\res
+com.tekartik.sqflite-main-4 C:\Users\jnel2\AppData\Local\Pub\Cache\hosted\pub.dev\sqflite-2.3.0\android\src\main\res
+com.tekartik.sqflite-profile-5 C:\Users\jnel2\AppData\Local\Pub\Cache\hosted\pub.dev\sqflite-2.3.0\android\src\profile\res
+com.tekartik.sqflite-pngs-6 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\sqflite\generated\res\pngs\profile
+com.tekartik.sqflite-resValues-7 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\sqflite\generated\res\resValues\profile
+com.tekartik.sqflite-rs-8 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\sqflite\generated\res\rs\profile
+com.tekartik.sqflite-mergeProfileResources-9 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\sqflite\intermediates\incremental\profile\mergeProfileResources\merged.dir
+com.tekartik.sqflite-mergeProfileResources-10 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\sqflite\intermediates\incremental\profile\mergeProfileResources\stripped.dir
+com.tekartik.sqflite-merged_res-11 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\sqflite\intermediates\merged_res\profile

@@ -1,0 +1,12 @@
+io.flutter.plugins.pathprovider.path_provider_android-jetified-window-java-1.0.0-beta04-0 C:\Users\jnel2\.gradle\caches\transforms-3\08a794a3f2f3970abb63093256f3a7ff\transformed\jetified-window-java-1.0.0-beta04\res
+io.flutter.plugins.pathprovider.path_provider_android-jetified-window-1.0.0-beta04-1 C:\Users\jnel2\.gradle\caches\transforms-3\6f3c94bc7e415994af128d830fc65f80\transformed\jetified-window-1.0.0-beta04\res
+io.flutter.plugins.pathprovider.path_provider_android-jetified-annotation-experimental-1.1.0-2 C:\Users\jnel2\.gradle\caches\transforms-3\8e2f9490fefd6c9168cbe28b58d6d5ff\transformed\jetified-annotation-experimental-1.1.0\res
+io.flutter.plugins.pathprovider.path_provider_android-core-1.6.0-3 C:\Users\jnel2\.gradle\caches\transforms-3\aaab9055df4bcc213684bd8c9a4ce85d\transformed\core-1.6.0\res
+io.flutter.plugins.pathprovider.path_provider_android-main-4 C:\Users\jnel2\AppData\Local\Pub\Cache\hosted\pub.dev\path_provider_android-2.2.1\android\src\main\res
+io.flutter.plugins.pathprovider.path_provider_android-profile-5 C:\Users\jnel2\AppData\Local\Pub\Cache\hosted\pub.dev\path_provider_android-2.2.1\android\src\profile\res
+io.flutter.plugins.pathprovider.path_provider_android-pngs-6 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\path_provider_android\generated\res\pngs\profile
+io.flutter.plugins.pathprovider.path_provider_android-resValues-7 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\path_provider_android\generated\res\resValues\profile
+io.flutter.plugins.pathprovider.path_provider_android-rs-8 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\path_provider_android\generated\res\rs\profile
+io.flutter.plugins.pathprovider.path_provider_android-mergeProfileResources-9 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\path_provider_android\intermediates\incremental\profile\mergeProfileResources\merged.dir
+io.flutter.plugins.pathprovider.path_provider_android-mergeProfileResources-10 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\path_provider_android\intermediates\incremental\profile\mergeProfileResources\stripped.dir
+io.flutter.plugins.pathprovider.path_provider_android-merged_res-11 C:\Users\jnel2\OneDrive\Documents\flutter_windows_3.13.9-stable\bees4-4\build\path_provider_android\intermediates\merged_res\profile

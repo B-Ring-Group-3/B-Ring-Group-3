@@ -8,58 +8,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // Import the created search delegate
 import 'package:bees4/core/utils/help_search_delegate.dart';
-
-
-
-// This must be run from inside an existing app,
-// e.g. the default Flutter app created by `flutter create APP_NAME`
+//import 'package:viam_sdk/protos/service/data_manager.dart';
 
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
-import 'package:viam_sdk/widgets.dart';
+//import 'package:viam_sdk/widgets.dart';
 
-// Step 2: Call this function from within your widget
-Future<ResourceName> connectToViam() async {
+class GraphsPageScreen extends StatefulWidget {
+  GraphsPageScreen({Key? key}) : super(key: key);
 
-
-
-  
-  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
-  final robot = await RobotClient.atAddress(
-    host,
-    RobotClientOptions.withApiKey(apiKeyId, apiKey),
-  );
-  print("\n------------------Printing resources-----------------------\n");
-  print(robot.resourceNames);
-  //String robotTemp = 'Temp';
-  ResourceName robotPower =
-        ResourceName(namespace:'rdk', type:'component', subtype:'power_sensor', name:'solarChannel');
-
-  print("\n------------------Printing power-----------------------\n");
-  print(robotPower);
-  print("\n-----------------------------------------\n");
-  print(robotPower.info_);
-   print("\n-----------------------------------------\n");
-  Resource aTemp = robot.getResource(robotPower);
-  print(aTemp);
-   print("\n-----------------movementSensor------------------------\n");
-  //final movementSensor = MovementSensor.fromRobot(robot, 'temp');
-  //print(movementSensor.readings());
-  
- 
-  return robotPower;
+  @override
+  _GraphsPageScreenState createState() => _GraphsPageScreenState();
 }
 
-
-
-class GraphsPageScreen extends StatelessWidget {
-  GraphsPageScreen({Key? key}) : super(key: key);
+class _GraphsPageScreenState extends State<GraphsPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  
-  
 
+
+//class GraphsPageScreen extends StatelessWidget {
+//  GraphsPageScreen({Key? key}) : super(key: key);
+//  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  Future<void> _refreshData() async {
+    setState(() {
+      // Add any logic here to refresh the data
+    });
+  }
+  
    @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -72,12 +46,18 @@ class GraphsPageScreen extends StatelessWidget {
             children: [
               SizedBox(height: 56, width: double.maxFinite),
               _buildMiddle(context), // Add the new section here
-              Spacer(),
+              //Spacer(),
+              _buildMiddle2(context), // Add the new section here
             ],
           ),
         ),
         bottomNavigationBar: _buildBack(context),
         drawer: _buildDrawer(context),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _refreshData,
+          tooltip: 'Refresh',
+          child: Icon(Icons.refresh),
+        ),
       ),
     );
   }
@@ -131,6 +111,9 @@ class GraphsPageScreen extends StatelessWidget {
       ],
     ),
   );
+
+
+  
 }
 
   /// Section Widget
@@ -176,7 +159,38 @@ Widget _buildMiddle(BuildContext context) {
           return Container(
             padding: EdgeInsets.all(16),
             child: Text(
-              'Connected to Viam. Robot robotPower: ${snapshot.data}',
+              'Connected to Viam. Robot temp: ${snapshot.data}',
+              
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          );
+        } else if (snapshot.hasError) {
+          // If there's an error during the connection, handle it here
+          return Container(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Error connecting to Viam: ${snapshot.error}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          );
+        } else {
+          // While the connection is in progress, show a loading indicator
+          return CircularProgressIndicator();
+        }
+      },
+    );
+  }
+
+  Widget _buildMiddle2(BuildContext context) {
+    return FutureBuilder(
+      future: connectToViam2(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          // The connection is complete, you can access the result
+          return Container(
+            padding: EdgeInsets.all(16),
+            child: Text(
+              'Connected to Viam. Robot Power: ${snapshot.data}',
               
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
@@ -213,4 +227,108 @@ Widget _buildMiddle(BuildContext context) {
     Navigator.pop(context);
   }
 }
+
+// Step 2: Call this function from within your widget
+Future<Map<String, dynamic>> connectToViam() async {
+  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
+  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  
+  RobotClient robot;
+  try {
+    robot = await RobotClient.atAddress(
+      host,
+      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+    );
+    print("\n------------------Printing resources-----------------------\n");
+    print(robot.resourceNames);
+    
+    Sensor temp = Sensor.fromRobot(robot, "temp");
+    Map<String, dynamic> tempReturnValue = await temp.readings(); // Await the result
+    print("temp get_readings return value: ");
+    print(tempReturnValue);
+
+    
+
+    // Attempt to close the connection with retry logic
+    const int maxAttempts = 3;
+    int attempts = 0;
+    while (attempts < maxAttempts) {
+      try {
+        await robot.close();
+        await Future.delayed(Duration(seconds: 5));
+        print('Next information-->');
+        break; // Exit the loop if close operation is successful
+      } catch (e) {
+        print('Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
+        attempts++; // Increment attempts counter
+        await Future.delayed(Duration(seconds: 1)); // Delay before retrying
+      }
+    }
+
+    return tempReturnValue;
+  } catch (e) {
+    print("Error connecting to Viam: $e");
+    throw e; // Re-throw the error to be handled by the caller
+  }
+}
+
+Future<double> connectToViam2() async {
+  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
+  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+
+  await Future.delayed(Duration(seconds: 5));
+  RobotClient robot;
+  try {
+    robot = await RobotClient.atAddress(
+      host,
+      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+    );
+    //print("\n------------------Printing resources-----------------------\n");
+    //print(robot.resourceNames);
+    
+   // Sensor temp = Sensor.fromRobot(robot, "temp");
+  //  Map<String, dynamic> tempReturnValue = await temp.readings(); // Await the result
+  //  print("temp get_readings return value: ");
+  //  print(tempReturnValue);
+
+  //var os = Sensor.fromRobot(robot, "os");
+//var osReturnValue = await os.readings(); // Await the result
+//print("os get_readings return value:" );
+//print(osReturnValue);
+
+var solarChannel = PowerSensor.fromRobot(robot, "solarChannel");
+double solarChannelReturnValue = await solarChannel.power();
+print("solarChannel get_power return value: {solar_channel_return_value}");
+print(solarChannelReturnValue);
+
+
+   // var boardConsumption = PowerSensor.fromRobot(robot, "boardConsumption");
+   // var boardConsumptionReturnValue = await boardConsumption.power();
+  //  print("boardConsumption get_power return value: {board_consumption_return_value}");
+  //  print(boardConsumptionReturnValue);
+
+    // Attempt to close the connection with retry logic
+    const int maxAttempts = 3;
+    int attempts = 0;
+    while (attempts < maxAttempts) {
+      try {
+        await robot.close();
+        print('Robot connection closed successfully');
+        break; // Exit the loop if close operation is successful
+      } catch (e) {
+        print('Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
+        attempts++; // Increment attempts counter
+        await Future.delayed(Duration(seconds: 1)); // Delay before retrying
+      }
+    }
+
+    return solarChannelReturnValue;
+  } catch (e) {
+    print("Error connecting to Viam: $e");
+    throw e; // Re-throw the error to be handled by the caller
+  }
+}
+
 

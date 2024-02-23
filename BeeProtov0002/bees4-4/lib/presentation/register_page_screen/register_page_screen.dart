@@ -4,12 +4,13 @@ import 'package:bees4/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
 // ignore_for_file: must_be_immutable
-class LoginScreen extends StatelessWidget {
-  LoginScreen({Key? key}) : super(key: key);
+class RegisterScreen extends StatelessWidget {
+  RegisterScreen({Key? key}) : super(key: key);
 
   TextEditingController enterhereController = TextEditingController();
-
   TextEditingController enterhereController1 = TextEditingController();
+  TextEditingController enterhereController2 = TextEditingController();
+
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +31,12 @@ class LoginScreen extends StatelessWidget {
                       Center(child: _username(context)),
                       SizedBox(height: 30.v),
                       Center(child: _password(context)),
-                      SizedBox(height: 55.v),
-                      _login(context),
                       SizedBox(height: 25.v),
-                      _register(context),
+                      Center(child: _confirm(context)),
+                      SizedBox(height: 40.v),
+                      _submit(context),
+                      SizedBox(height: 25.v),
+                      _cancel(context),
                       SizedBox(height: 5.v)
                     ]))));
   }
@@ -43,7 +46,8 @@ class LoginScreen extends StatelessWidget {
       Container(
         decoration: AppDecoration.outlineBlack,
         child: Text(
-          "The Bee Ring",
+          "Register New Account",
+          textAlign: TextAlign.center,
           style: theme.textTheme.displayMedium?.copyWith(
             shadows: [
               Shadow(
@@ -56,14 +60,6 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
       ),
-      CustomImageView(
-        //imagePath: ImageConstant.imgTwemojiHoneybee,
-        imagePath: ImageConstant.imgBeeRingLogo,
-        height: 125.v,
-        width: 125.h,
-        alignment: Alignment.center,
-        //margin: EdgeInsets.only(left: 91.h)
-      )
     ]);
   }
 
@@ -73,8 +69,39 @@ class LoginScreen extends StatelessWidget {
         Container(
           decoration: AppDecoration.outlineBlack,
           child: Text(
-            "Username",
-            style: theme.textTheme.headlineLarge?.copyWith(
+            "New Username",
+            style: theme.textTheme.headlineMedium?.copyWith(
+              shadows: [
+                Shadow(
+                  color: Colors.black
+                      .withOpacity(0.5), // Adjust opacity and color as needed
+                  offset:
+                      Offset(0, 2), // Adjust the offset based on your design
+                  blurRadius: 4, // Adjust the blur radius based on your design
+                ),
+              ],
+            ),
+          ),
+        ),
+        Padding(
+            padding: EdgeInsets.symmetric(horizontal: 25.h),
+            child: CustomTextFormField(
+              controller: enterhereController,
+              hintText: "enter here",
+              autofocus: false,
+            )),
+      ],
+    );
+  }
+
+  Widget _password(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          decoration: AppDecoration.outlineBlack,
+          child: Text(
+            "New Password",
+            style: theme.textTheme.headlineMedium?.copyWith(
               shadows: [
                 Shadow(
                   color: Colors.black
@@ -98,14 +125,14 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _password(BuildContext context) {
+    Widget _confirm(BuildContext context) {
     return Column(
       children: [
         Container(
           decoration: AppDecoration.outlineBlack,
           child: Text(
-            "Password",
-            style: theme.textTheme.headlineLarge?.copyWith(
+            "Confirm Password",
+            style: theme.textTheme.headlineMedium?.copyWith(
               shadows: [
                 Shadow(
                   color: Colors.black
@@ -121,7 +148,7 @@ class LoginScreen extends StatelessWidget {
         Padding(
             padding: EdgeInsets.symmetric(horizontal: 25.h),
             child: CustomTextFormField(
-              controller: enterhereController,
+              controller: enterhereController2,
               hintText: "enter here",
               textInputAction: TextInputAction.done,
               autofocus: false,
@@ -130,40 +157,35 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _login(BuildContext context) {
+  Widget _submit(BuildContext context) {
     return CustomOutlinedButton(
       width: 161.h,
-      text: "Login",
+      text: "Submit",
       onPressed: () {
-        gotoDash(context);
+        gotoLogin(context);
       },
       alignment: Alignment.center,
     );
   }
 
-  Widget _register(BuildContext context) {
+  Widget _cancel(BuildContext context) {
     return CustomOutlinedButton(
       width: 145.h,
-      text: "Register",
+      text: "Cancel",
       buttonStyle: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll<Color>(Color(0xFFBF8C00))),
       buttonTextStyle: TextStyle(
         fontSize: 30,
         color: Color(0xFFFFFFFF)),
       onPressed: () {
-        gotoRegister(context);
+        gotoLogin(context);
       },
       alignment: Alignment.center,
     );
   }
 
-  /// Navigates to the bRingDashScreen when the action is triggered.
-  gotoDash(BuildContext context) {
-    Navigator.popAndPushNamed(context, AppRoutes.bRingDashScreen);
-  }
-
-  /// Navigates to the registration screen when the action is triggered.
-  gotoRegister(BuildContext context) {
-    Navigator.popAndPushNamed(context, AppRoutes.registerScreen);
+  /// Navigates to the login screen when the action is triggered.
+  gotoLogin(BuildContext context) {
+    Navigator.popAndPushNamed(context, AppRoutes.loginScreen);
   }
 }

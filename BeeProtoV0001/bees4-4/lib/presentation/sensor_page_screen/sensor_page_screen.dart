@@ -24,7 +24,6 @@ class SensorPageScreen extends StatefulWidget {
 class _SensorPageScreenState extends State<SensorPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-
 //class SensorPageScreen extends StatelessWidget {
 //SensorPageScreen({Key? key}) : super(key: key);
 //final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -62,64 +61,67 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
       ),
     );
   }
-  
+
   Widget _buildDrawer(BuildContext context) {
-  return Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        DrawerHeader(
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(255, 210, 51, 1),
-          ),
-          child: Text(
-            'Sensor Options',
-            style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'robotoBold',
-              shadows: [
-              Shadow(
-              color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-              offset: Offset(0, 2), // Adjust the offset based on your design
-              blurRadius: 4, // Adjust the blur radius based on your design
-        ),
-        ],
-              fontSize: 24.0,
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(255, 210, 51, 1),
+            ),
+            child: Text(
+              'Sensor Options',
+              style: TextStyle(
+                color: Colors.white,
+                fontFamily: 'robotoBold',
+                shadows: [
+                  Shadow(
+                    color: Colors.black
+                        .withOpacity(0.5), // Adjust opacity and color as needed
+                    offset:
+                        Offset(0, 2), // Adjust the offset based on your design
+                    blurRadius:
+                        4, // Adjust the blur radius based on your design
+                  ),
+                ],
+                fontSize: 24.0,
+              ),
             ),
           ),
-        ),
-        ListTile(
-          title: Text('Sensor 1'),
-          onTap: () {
-            // Handle item 1 tap
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: Text('Sensor 2'),
-          onTap: () {
-            // Handle item 2 tap
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: Text('Sensor 3'),
-          onTap: () {
-            // Handle item 3 tap
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: Text('Sensor Settings'),
-          onTap: () {
-            // Handle item 3 tap
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
-}
+          ListTile(
+            title: Text('Sensor 1'),
+            onTap: () {
+              // Handle item 1 tap
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Sensor 2'),
+            onTap: () {
+              // Handle item 2 tap
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Sensor 3'),
+            onTap: () {
+              // Handle item 3 tap
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Sensor Settings'),
+            onTap: () {
+              // Handle item 3 tap
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -154,7 +156,8 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
       styleType: Style.bgFill,
     );
   }
-Widget _buildMiddle(BuildContext context) {
+
+  Widget _buildMiddle(BuildContext context) {
     return FutureBuilder(
       future: connectToViam(),
       builder: (context, snapshot) {
@@ -164,7 +167,6 @@ Widget _buildMiddle(BuildContext context) {
             padding: EdgeInsets.all(16),
             child: Text(
               'Connected to Viam. Robot temp: ${snapshot.data}',
-              
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           );
@@ -195,7 +197,6 @@ Widget _buildMiddle(BuildContext context) {
             padding: EdgeInsets.all(16),
             child: Text(
               'Connected to Viam. Robot Power: ${snapshot.data}',
-              
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           );
@@ -237,7 +238,7 @@ Future<Map<String, dynamic>> connectToViam() async {
   const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
   const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
   const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
-  
+
   RobotClient robot;
   try {
     robot = await RobotClient.atAddress(
@@ -246,13 +247,12 @@ Future<Map<String, dynamic>> connectToViam() async {
     );
     print("\n------------------Printing resources-----------------------\n");
     print(robot.resourceNames);
-    
+
     Sensor temp = Sensor.fromRobot(robot, "temp");
-    Map<String, dynamic> tempReturnValue = await temp.readings(); // Await the result
+    Map<String, dynamic> tempReturnValue =
+        await temp.readings(); // Await the result
     print("temp get_readings return value: ");
     print(tempReturnValue);
-
-    
 
     // Attempt to close the connection with retry logic
     const int maxAttempts = 3;
@@ -264,7 +264,8 @@ Future<Map<String, dynamic>> connectToViam() async {
         print('Next information-->');
         break; // Exit the loop if close operation is successful
       } catch (e) {
-        print('Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
+        print(
+            'Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
         attempts++; // Increment attempts counter
         await Future.delayed(Duration(seconds: 1)); // Delay before retrying
       }
@@ -289,29 +290,11 @@ Future<double> connectToViam2() async {
       host,
       RobotClientOptions.withApiKey(apiKeyId, apiKey),
     );
-    //print("\n------------------Printing resources-----------------------\n");
-    //print(robot.resourceNames);
-    
-   // Sensor temp = Sensor.fromRobot(robot, "temp");
-  //  Map<String, dynamic> tempReturnValue = await temp.readings(); // Await the result
-  //  print("temp get_readings return value: ");
-  //  print(tempReturnValue);
 
-  //var os = Sensor.fromRobot(robot, "os");
-//var osReturnValue = await os.readings(); // Await the result
-//print("os get_readings return value:" );
-//print(osReturnValue);
-
-var solarChannel = PowerSensor.fromRobot(robot, "solarChannel");
-double solarChannelReturnValue = await solarChannel.power();
-print("solarChannel get_power return value: {solar_channel_return_value}");
-print(solarChannelReturnValue);
-
-
-   // var boardConsumption = PowerSensor.fromRobot(robot, "boardConsumption");
-   // var boardConsumptionReturnValue = await boardConsumption.power();
-  //  print("boardConsumption get_power return value: {board_consumption_return_value}");
-  //  print(boardConsumptionReturnValue);
+    var solarChannel = PowerSensor.fromRobot(robot, "solarChannel");
+    double solarChannelReturnValue = await solarChannel.power();
+    print("solarChannel get_power return value: {solar_channel_return_value}");
+    print(solarChannelReturnValue);
 
     // Attempt to close the connection with retry logic
     const int maxAttempts = 3;
@@ -322,7 +305,8 @@ print(solarChannelReturnValue);
         print('Robot connection closed successfully');
         break; // Exit the loop if close operation is successful
       } catch (e) {
-        print('Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
+        print(
+            'Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
         attempts++; // Increment attempts counter
         await Future.delayed(Duration(seconds: 1)); // Delay before retrying
       }
@@ -334,5 +318,3 @@ print(solarChannelReturnValue);
     throw e; // Re-throw the error to be handled by the caller
   }
 }
-
-

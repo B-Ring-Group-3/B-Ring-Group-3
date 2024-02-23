@@ -15,56 +15,56 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     mediaQueryData = MediaQuery.of(context);
     return SafeArea(
-      child: Scaffold(
-        backgroundColor: theme.colorScheme.secondaryContainer,
-        resizeToAvoidBottomInset: false,
-        body: Container(
-          width: double.maxFinite,
-          padding: EdgeInsets.only(left: 37.h, top: 65.v, right: 37.h),
-          child: Column(
-            children: [
-              _title(context),
-              SizedBox(height: 68.v),
-              _username(context),
-              SizedBox(height: 68.v),
-              _password(context),
-              SizedBox(height: 78.v),
-              _login(context),
-              SizedBox(height: 5.v)
-            ]
-          )
-        )
-      )
-    );
+        child: Scaffold(
+            backgroundColor: theme.colorScheme.secondaryContainer,
+            resizeToAvoidBottomInset: false,
+            body: Container(
+                width: double.maxFinite,
+                alignment: Alignment.center,
+                padding: EdgeInsets.only(left: 30.h, top: 55.v, right: 30.h),
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(child: _title(context)),
+                      SizedBox(height: 50.v),
+                      Center(child: _username(context)),
+                      SizedBox(height: 30.v),
+                      Center(child: _password(context)),
+                      SizedBox(height: 55.v),
+                      _login(context),
+                      SizedBox(height: 25.v),
+                      _register(context),
+                      SizedBox(height: 5.v)
+                    ]))));
   }
 
   Widget _title(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          decoration: AppDecoration.outlineBlack,
-          child: Text(
-            "The Bee Ring",
-            style: theme.textTheme.displayMedium?.copyWith(
-              shadows: [
-                Shadow(
-                  color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-                  offset: Offset(0, 2), // Adjust the offset based on your design
-                  blurRadius: 4, // Adjust the blur radius based on your design
-                ),
-              ],
-            ),
+    return Column(children: [
+      Container(
+        decoration: AppDecoration.outlineBlack,
+        child: Text(
+          "The Bee Ring",
+          style: theme.textTheme.displayMedium?.copyWith(
+            shadows: [
+              Shadow(
+                color: Colors.black
+                    .withOpacity(0.5), // Adjust opacity and color as needed
+                offset: Offset(0, 2), // Adjust the offset based on your design
+                blurRadius: 4, // Adjust the blur radius based on your design
+              ),
+            ],
           ),
         ),
-        CustomImageView(
-          imagePath: ImageConstant.imgTwemojiHoneybee,
-          height: 103.v,
-          width: 109.h,
-          alignment: Alignment.centerLeft,
-          margin: EdgeInsets.only(left: 91.h)
-        )
-      ]
-    );
+      ),
+      CustomImageView(
+        //imagePath: ImageConstant.imgTwemojiHoneybee,
+        imagePath: ImageConstant.imgBeeRingLogo,
+        height: 125.v,
+        width: 125.h,
+        alignment: Alignment.center,
+        //margin: EdgeInsets.only(left: 91.h)
+      )
+    ]);
   }
 
   Widget _username(BuildContext context) {
@@ -77,8 +77,10 @@ class LoginScreen extends StatelessWidget {
             style: theme.textTheme.headlineLarge?.copyWith(
               shadows: [
                 Shadow(
-                  color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-                  offset: Offset(0, 2), // Adjust the offset based on your design
+                  color: Colors.black
+                      .withOpacity(0.5), // Adjust opacity and color as needed
+                  offset:
+                      Offset(0, 2), // Adjust the offset based on your design
                   blurRadius: 4, // Adjust the blur radius based on your design
                 ),
               ],
@@ -86,13 +88,12 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: 28.h, right: 23.h),
-          child: CustomTextFormField(
-            controller: enterhereController,
-            hintText: "enter here",
-            autofocus: false,
-          )
-        ),
+            padding: EdgeInsets.symmetric(horizontal: 25.h),
+            child: CustomTextFormField(
+              controller: enterhereController1,
+              hintText: "enter here",
+              autofocus: false,
+            )),
       ],
     );
   }
@@ -107,8 +108,10 @@ class LoginScreen extends StatelessWidget {
             style: theme.textTheme.headlineLarge?.copyWith(
               shadows: [
                 Shadow(
-                  color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-                  offset: Offset(0, 2), // Adjust the offset based on your design
+                  color: Colors.black
+                      .withOpacity(0.5), // Adjust opacity and color as needed
+                  offset:
+                      Offset(0, 2), // Adjust the offset based on your design
                   blurRadius: 4, // Adjust the blur radius based on your design
                 ),
               ],
@@ -116,14 +119,13 @@ class LoginScreen extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(left: 28.h, right: 23.h),
-          child: CustomTextFormField(
-            controller: enterhereController1,
-            hintText: "enter here",
-            textInputAction: TextInputAction.done,
-            autofocus: false,
-          )
-        ),
+            padding: EdgeInsets.symmetric(horizontal: 25.h),
+            child: CustomTextFormField(
+              controller: enterhereController,
+              hintText: "enter here",
+              textInputAction: TextInputAction.done,
+              autofocus: false,
+            )),
       ],
     );
   }
@@ -132,14 +134,36 @@ class LoginScreen extends StatelessWidget {
     return CustomOutlinedButton(
       width: 161.h,
       text: "Login",
-      margin: EdgeInsets.only(left: 65.h),
-      onPressed: () { gotoDash(context); },
-      alignment: Alignment.centerLeft,
-      );
+      onPressed: () {
+        gotoDash(context);
+      },
+      alignment: Alignment.center,
+    );
+  }
+
+  Widget _register(BuildContext context) {
+    return CustomOutlinedButton(
+      width: 145.h,
+      text: "Register",
+      buttonStyle: ButtonStyle(
+          backgroundColor: MaterialStatePropertyAll<Color>(Color(0xFFBF8C00))),
+      buttonTextStyle: TextStyle(
+        fontSize: 30,
+        color: Color(0xFFFFFFFF)),
+      onPressed: () {
+        gotoRegister(context);
+      },
+      alignment: Alignment.center,
+    );
   }
 
   /// Navigates to the bRingDashScreen when the action is triggered.
   gotoDash(BuildContext context) {
     Navigator.popAndPushNamed(context, AppRoutes.bRingDashScreen);
+  }
+
+  /// Navigates to the registration screen when the action is triggered.
+  gotoRegister(BuildContext context) {
+    Navigator.popAndPushNamed(context, AppRoutes.registerScreen);
   }
 }

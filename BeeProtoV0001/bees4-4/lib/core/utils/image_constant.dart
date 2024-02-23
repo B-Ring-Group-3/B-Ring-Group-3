@@ -5,6 +5,8 @@ class ImageConstant {
   // login images
   static String imgTwemojiHoneybee = '$imagePath/img_twemoji_honeybee.svg';
 
+  static String imgBeeRingLogo = '$imagePath/img_beering_logo.svg';
+
   // B-Ring-Dash images
   static String imgMenu = '$imagePath/img_menu.svg';
 

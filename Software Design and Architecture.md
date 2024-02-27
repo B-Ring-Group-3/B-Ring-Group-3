@@ -87,7 +87,7 @@ Both have their pros and cons. Event-sourcing requires a reliable network infras
 - **Backend Server - Viam:**
 - Responsibilities: Processes API requests, handles business logic, manages hive data, user profiles, and authentication, and interacts with the database (stored in JSON files).
 - Role: The backend server serves as the core of the system, managing user authentication, realtime data collection, and processing. It ensures the security and integrity of hive data and delivers data to the UI via APIs.
-- **Database (JSON Files):**
+- **Database - Firebase:**
 - Responsibilities: Stores and manages hive information, environmental data, user profiles, and system logs.
 - Role: The database component manages the persistence of crucial data, including hive setup details, real-time sensor data, and user accounts. It serves as a centralized data repository for the system.
 - **B Ring Hardware:**
@@ -127,7 +127,7 @@ Through Viam we will use the following Data Management Plan:
 
 **Data Collection:**
 
-- Real-time sensor data is collected from hives, including temperature, humidity, air quality.
+- Real-time sensor data is collected from hives, including temperature and humidity.
 - Collected data is stored in the respective database tables.
 
 **User Interaction:**
@@ -137,7 +137,7 @@ Through Viam we will use the following Data Management Plan:
 
 <a name="_page4_x72.00_y581.12"></a>Interface Design
 
-GET/ current temperature, GET/ current queen status, POST/ add new limitation for hive, PUT/ change limitation with new value,
+GET/ current temperature, POST/ add new limitation for hive, PUT/ change limitation with new value
 
 <a name="_page5_x72.00_y72.00"></a>Considerations
 
@@ -155,7 +155,7 @@ Beering is going to update the UI based on the collected feedback and user exper
 
 <a name="_page5_x72.00_y321.20"></a>Deployment Strategy
 
-After we met with the software engineer at Viam, Viam provided many things for deployment such as databases and servers set in Dart, so we mostly needed to do the frontend side, such as UI and API with local device’s memory efficiency. Therefore, we are deploying our service built with Flutter which can deploy IOS and Android at the same time.
+After we met with the software engineer at Viam, Viam provided many things for deployment such as databases and servers set in Dart, so we mostly needed to do the frontend side, such as UI and API with local device’s memory efficiency. Therefore, we are deploying our service built with Flutter which can deploy IOS and Android at the same time. We will manage the database with Firebase. 
 
 **Local Development Environment:** This environment is for individual developer workstations and will be used during the development phase.
 
@@ -238,9 +238,9 @@ Dart: a client-optimized programming language for app development
 
 Data Analysis: The examination of data to extract useful information, patterns, and insights.
 
-Flutter: An open-source UI framework for building natively compiled applications for mobile, web, and desktop from a single codebase
+Firebase: An API for application data synchronization across Android, web, and iOS devices
 
-JSON (JavaScript Object Notation): A data interchange format used for structured data, often used in data storage and transmission
+Flutter: An open-source UI framework for building natively compiled applications for mobile, web, and desktop from a single codebase
 
 Load Balancing: The process of distributing network traffic across multiple servers to ensure high availability, improved performance, and redundancy
 

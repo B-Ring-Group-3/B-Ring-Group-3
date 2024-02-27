@@ -650,15 +650,11 @@ Temperature readings
 
 Humidity readings
 
-Brood patterns
-
-Honey production
-
-Bee behavior
+Battery life
 
 **Hive Information**:
 
-Data Structure: JSON or XML
+Data Structure: Firebase, JSON or XML
 
 
 

@@ -93,15 +93,21 @@ All issues need to relate to a user story. Tasks that cannot be completed in a w
 
 We will be building a mobile Android app UI that interfaces with a backend system. We will break up the work as follows:
 
-**Systems Developer (2 members after week 8, once initial UI is setup):**
+**Jon, Zoe - Data Management:**
 
-- Responsible for Android app development.
-- Implement the user interface and user experience.
-- Integrate with the backend API.
-- Ensure the app's performance, responsiveness, and compatibility with various Android devices.
-- Collaborate closely with the UI/UX Designer.
+- Responsible for collecting real-time data from the robot
+- Establish connection between robot and Flutter frontend
+- Store data within a certain range and graph values
+- Maximize accessibility to user data via database organization
 
-**UI/UX Designer (4 members week 1-4, 2 members afterwards) :**
+**Seongki - User Authentication:**
+
+- Design a Firebase database for username/password storage
+- Create method of registration for users
+- Establish connection with the Flutter frontend
+- Connect B Ring API keys to independent users
+
+**Shannon, Carter - UI/UX Designer:**
 
 - Create the visual design and user experience of the app.
 - Design app screens, layouts, icons, and other graphical elements.
@@ -115,23 +121,23 @@ We will be building a mobile Android app UI that interfaces with a backend syste
 - Ensure the app meets quality and performance standards.
 - Collaborate with developers to resolve issues.
 
-**Jon Nelson - Project Manager or Scrum Master (1 member, Also works with UI or systems development):**
+**Jon, Zoe - Project Manager (Zoe) or Scrum Master (Jon):**
 
 - Coordinate and plan project tasks, timelines, and milestones.
 - Facilitate communication and collaboration among team members.
 - Track progress, manage resources, and handle any project-related issues.
-- Ensure the project stays on schedule and within budget..
+- Ensure the project stays on schedule and within budget.
 
 ##
 # **Tooling**
 
 | **Version Control** | GitHub |
 | --- | --- |
-| **Project Management** | GitHub Issues and Projects |
-| **Documentation** | Google Doc, Github Wiki, README, (LaTeX?) |
-| **Test Framework** | Possibly Espresso: Espresso is an Android UI testing framework for creating user interface (UI) tests. Flutter testing frameworks. Unit Testing with Mock/Testing Server: A server within the Viam system is isolated to allow for backend responses, without connecting to critical backend services. This will be a backend staging server. |
+| **Project Management** | Trello |
+| **Documentation** | Google Doc, Github Wiki, README |
+| **Test Framework** | Possibly Espresso: Espresso is an Android UI testing framework for creating user interface (UI) tests. Flutter testing frameworks. Unit Testing with Mock/Testing Server: A server within the Viam system is isolated to allow for backend responses, without connecting to critical backend services. This will be a backend staging server. Firebase: stores data from communicating frontend requests for username/password interface |
 | **Linting and Formatting** | Android Lint will analyze Android projects for potential issues, like compatibility problems. The Dart linter is also built onto VS code and is used by default |
-| **CI/CD** | GitHub Actions, (Jenkins?) |
+| **CI/CD** | GitHub Actions |
 | **IDE** | Visual Studio Code Android Studio: Official (IDE) for Android app development. |
 | **Graphic Design** | Adobe XD or Sketch: For UI/UX design and prototyping. Figma: For collaborative design and prototyping. InVision: For creating interactive design prototypes.Canva: For UI/UX design and prototyping |
 | **Others** | Discord and MS teams for Communication. Zoom for client meetings |

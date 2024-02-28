@@ -654,7 +654,7 @@ Battery life
 
 **Hive Information**:
 
-Data Structure: Firebase, JSON or XML
+Data Structure: JSON or XML
 
 
 

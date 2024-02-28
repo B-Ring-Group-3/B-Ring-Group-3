@@ -1,4 +1,4 @@
-# Software Development Process (SDP) - Bee Ring Group
+# Software Development Process (SDP) - Bee-Ring Group
 
 Group members: Jon Nelson, Seongki Lee, Carter Nelson, Zoe Downen, Shannon Bell
 

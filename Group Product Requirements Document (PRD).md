@@ -158,7 +158,7 @@ or present.
 
 Use Case: The user will be able to see whether they need to refill the feeding trays.
 
-**Bee Ring Device Management**
+**Bee-Ring Device Management**
 
 Use Case: The user will access their settings on the app and select which specific notifications
 
@@ -196,13 +196,13 @@ be prevented with early detection of abnormalities in the hive. As it stands, be
 
 have easy access to preventative technologies.
 
-The Bee Ring wants to make beekeeping easy and effective, especially for small-scale
+The Bee-Ring wants to make beekeeping easy and effective, especially for small-scale
 
 beekeepers facing challenges due to declining bee populations. We want to simplify hive
 
 management by using smart technology. Our vision is to empower beekeepers with a
 
-user-friendly tool that manages hive data and prevents health issues early on. The Bee Ring is
+user-friendly tool that manages hive data and prevents health issues early on. The Bee-Ring is
 
 designed for beekeepers who are passionate about their hives but struggle with the
 
@@ -1082,7 +1082,7 @@ environment for hobby
 
 beekeeping?
 
-Increase free time % of pre Bee Ring time spent
+Increase free time % of pre Bee-Ring time spent
 
 100%
 

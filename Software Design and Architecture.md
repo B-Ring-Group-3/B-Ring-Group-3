@@ -28,7 +28,7 @@ The document outlines the architecture for a phone app-based hobby beekeeping ap
 
 **Project Objectives**
 
-- The core objectives of the B-Ring project are as follows:
+- The core objectives of the Bee-Ring project are as follows:
 - Develop a user-friendly mobile Android app for beekeepers to monitor hive conditions, bee behavior, and environmental factors in real-time.
 - Implement a scalable backend system capable of collecting, storing, and processing hive-related data efficiently, serving multiple users simultaneously.
 - Enable automated notifications for beekeepers, alerting them to critical hive events and optimal honey collection conditions.
@@ -67,11 +67,11 @@ There are three different architectural patterns that would be ideal for this pr
 
 **Client-Server Pattern:**
 
-The client-server pattern is well-suited for scenarios where there is a need for centralized data management and control, making it an ideal choice for B-Ring. Beehive data, user profiles, sensor calibration, and notification records are vital components that need centralized management.
+The client-server pattern is well-suited for scenarios where there is a need for centralized data management and control, making it an ideal choice for Bee-Ring. Beehive data, user profiles, sensor calibration, and notification records are vital components that need centralized management.
 
 **Event-Sourcing Pattern:**
 
-An event sourcing pattern is good for applications that use real-time data. The B Ring uses real-time data to report anomalies in temperature, humidity, and bee behavior, so this architectural pattern caters to that requirement.
+An event sourcing pattern is good for applications that use real-time data. The Bee-Ring uses real-time data to report anomalies in temperature, humidity, and bee behavior, so this architectural pattern caters to that requirement.
 
 **Controller-Responder Pattern:**
 
@@ -90,20 +90,22 @@ Both have their pros and cons. Event-sourcing requires a reliable network infras
 - **Database - Firebase:**
 - Responsibilities: Stores and manages hive information, environmental data, user profiles, and system logs.
 - Role: The database component manages the persistence of crucial data, including hive setup details, real-time sensor data, and user accounts. It serves as a centralized data repository for the system.
-- **B Ring Hardware:**
+- **Bee-Ring Hardware:**
 - Responsibilities: provides beekeeping footage and physical data collection to server
-- Role: The hardware is the setup for all of the sensors and video footage; it is the physical essence of the B Ring. All other components of the system rely on the hardware for accurate sensor measurements and video analysis.
+- Role: The hardware is the setup for all of the sensors and video footage; it is the physical essence of the Bee-Ring. All other components of the system rely on the hardware for accurate sensor measurements and video analysis.
 
 <a name="_page3_x72.00_y546.29"></a>Data Management
 
-Data will be stored and able to be accessed through the B Rings Viam backend with the Dart programming language. This means that the database is already set up, and we just need to access the data from the frontend to display to the user. We have yet to receive access for this code, so we don’t know what the current database looks like. After we get access to the current program, we can learn how to access the data for user consumption. Their service has data management built into it, allowing users to capture, sync, view, label, and export data.
+Most data will be stored and able to be accessed through the Bee-Rings Viam backend with the Dart programming language. The only part that is not stored with Viam will be user information, which will be through Firebase. The database for the sensor information is already set up, and we just need to access the data from the frontend to display to the user. Viam's service has data management built into it, allowing users to capture, sync, view, label, and export data. We have set up Firebase user authentication, but we are still working out some issues.
 
-Through Viam we will use the following Data Management Plan:
+In Firebase we will use this Data Management Plan:
 
 **User Profiles:**
 
 - Fields: User ID, username, password (hashed), email, notification preferences.
 - Description: Stores user information, including login credentials and notification preferences.
+
+Through Viam we will use the following Data Management Plan:
 
 **Hive Information:**
 
@@ -161,7 +163,7 @@ After we met with the software engineer at Viam, Viam provided many things for d
 
 **Staging Environment**: The staging environment will hopefully be an actual device that replicates the production environment for pre-release testing. So a phone.
 
-**Production Environment:** This is the live environment where end-users access and interact with the B-Ring through the Flutter-based frontend UI hosted on infrastructure connected to the Viam backend services.
+**Production Environment:** This is the live environment where end-users access and interact with the Bee-Ring through the Flutter-based frontend UI hosted on infrastructure connected to the Viam backend services.
 
 **Local Development strategy:**
 
@@ -254,4 +256,4 @@ SSL/TLS (Secure Sockets Layer/Transport Layer Security): Cryptographic protocols
 
 System Logs: Records that document system events, activities, and errors for troubleshooting and auditing
 
-Viam: A backend server and data management platform used in the B-Ring project
+Viam: A backend server and data management platform used in the Bee-Ring project

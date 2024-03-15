@@ -96,7 +96,6 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if(title == "Robot Power")
                 Text(
                   title,
                   style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),

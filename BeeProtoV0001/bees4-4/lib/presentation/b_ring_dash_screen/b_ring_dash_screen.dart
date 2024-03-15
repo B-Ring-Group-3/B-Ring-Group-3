@@ -62,6 +62,7 @@ class BRingDashScreen extends StatelessWidget {
     );
   }
 
+  // Clickable widget to link to alert screen
   Widget _alerts(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
@@ -104,6 +105,7 @@ class BRingDashScreen extends StatelessWidget {
     ]);
   }
 
+  // Clickable widget to link to sensors screen
   Widget _sensors(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
@@ -146,6 +148,7 @@ class BRingDashScreen extends StatelessWidget {
     ]);
   }
 
+  // Clickable widget to connect to graphs screen
   Widget _graphs(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(

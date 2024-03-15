@@ -11,7 +11,6 @@ class RegisterScreen extends StatelessWidget {
   TextEditingController enterhereController1 = TextEditingController();
   TextEditingController enterhereController2 = TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     mediaQueryData = MediaQuery.of(context);
@@ -125,7 +124,7 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
-    Widget _confirm(BuildContext context) {
+  Widget _confirm(BuildContext context) {
     return Column(
       children: [
         Container(
@@ -174,9 +173,7 @@ class RegisterScreen extends StatelessWidget {
       text: "Cancel",
       buttonStyle: ButtonStyle(
           backgroundColor: MaterialStatePropertyAll<Color>(Color(0xFFBF8C00))),
-      buttonTextStyle: TextStyle(
-        fontSize: 30,
-        color: Color(0xFFFFFFFF)),
+      buttonTextStyle: TextStyle(fontSize: 30, color: Color(0xFFFFFFFF)),
       onPressed: () {
         gotoLogin(context);
       },

@@ -40,18 +40,17 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
       child: Scaffold(
         key: _scaffoldKey,
         appBar: _buildAppBar(context),
-        body: SizedBox(
-          width: double.maxFinite,
+        body: SingleChildScrollView(
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 56, width: double.maxFinite),
-              _buildMiddle(context), // Add the new section here
-              //Spacer(),
-              _buildMiddle2(context), // Add the new section here
+              SizedBox(height: 20),
+              _buildSensorInfo(context, 'Robot Temp and Humidity', connectToViam), // Add the new section here
+              SizedBox(height: 20),
+              _buildSensorInfo(context, 'Robot Power', connectToViam2), // Add the new section here
             ],
           ),
         ),
-        bottomNavigationBar: _buildBack(context),
         drawer: _buildDrawer(context),
         floatingActionButton: FloatingActionButton(
           onPressed: _refreshData,
@@ -62,6 +61,88 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
     );
   }
 
+  Widget _buildSensorInfo(BuildContext context, String title, Function() connectFunction) {
+    return FutureBuilder(
+      future: connectFunction(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text('Error: ${snapshot.error}'),
+          );
+        } else {
+          // Extract data based on the title
+          double temperature = 0.0;
+          double humidity = 0.0;
+          double power = 0.0;
+
+          if (title == 'Robot Temp and Humidity') {
+            Map<String, dynamic> sensorDataTempHum = snapshot.data as Map<String, dynamic>;
+            temperature = double.parse((sensorDataTempHum["temperature_celcius"] ?? 0.0).toStringAsFixed(2));
+            humidity = double.parse((sensorDataTempHum["relative_humidity_pct"] ?? 0.0).toStringAsFixed(2));
+
+          } else if (title == 'Robot Power') {
+            double sensorDataHum = snapshot.data as double;
+            power = double.parse(sensorDataHum.toStringAsFixed(2));
+            power *= 100;
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if(title == "Robot Power")
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 10),
+                // Display temperature and humidity if title is 'Robot Temp'
+                if (title == 'Robot Temp and Humidity') ...[
+                  Text(
+                    'Temperature:',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    '$temperature °C',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    'Humidity:',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    '$humidity %',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+                // Display power if title is 'Robot Power'
+                if (title == 'Robot Power') ...[
+                  Text(
+                    'Power:',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  Text(
+                    '$power %',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ],
+            ),
+          );
+        }
+      },
+    );
+  }
+
+
+  }
+  
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
@@ -157,66 +238,6 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
     );
   }
 
-  Widget _buildMiddle(BuildContext context) {
-    return FutureBuilder(
-      future: connectToViam(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // The connection is complete, you can access the result
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Connected to Viam. Robot temp: ${snapshot.data}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          // If there's an error during the connection, handle it here
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Error connecting to Viam: ${snapshot.error}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else {
-          // While the connection is in progress, show a loading indicator
-          return CircularProgressIndicator();
-        }
-      },
-    );
-  }
-
-  Widget _buildMiddle2(BuildContext context) {
-    return FutureBuilder(
-      future: connectToViam2(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // The connection is complete, you can access the result
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Connected to Viam. Robot Power: ${snapshot.data}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          // If there's an error during the connection, handle it here
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Error connecting to Viam: ${snapshot.error}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else {
-          // While the connection is in progress, show a loading indicator
-          return CircularProgressIndicator();
-        }
-      },
-    );
-  }
-
   /// Section Widget
   Widget _buildBack(BuildContext context) {
     return CustomElevatedButton(
@@ -231,7 +252,6 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
   void onBackPressed(BuildContext context) {
     Navigator.pop(context);
   }
-}
 
 // Step 2: Call this function from within your widget
 Future<Map<String, dynamic>> connectToViam() async {
@@ -318,3 +338,79 @@ Future<double> connectToViam2() async {
     throw e; // Re-throw the error to be handled by the caller
   }
 }
+
+
+// Widget _buildMiddle(BuildContext context) {
+//     return FutureBuilder(
+//       future: connectToViam(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.done) {
+//           // The connection is complete, you can access the result
+//           return Container(
+//             color: Colors.blue,
+//             padding: EdgeInsets.all(16),
+//             child: Text(
+//               'Connected to Viam. Robot temp: ${snapshot.data}',
+//
+//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//           );
+//         } else if (snapshot.hasError) {
+//           // If there's an error during the connection, handle it here
+//           return Container(
+//             padding: EdgeInsets.all(16),
+//             child: Text(
+//               'Error connecting to Viam: ${snapshot.error}',
+//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//           );
+//         } else {
+//           // While the connection is in progress, show a loading indicator
+//           return Container(
+//               padding: EdgeInsets.all(16),
+//               margin: EdgeInsets.all(16),
+//               child: CircularProgressIndicator()
+//           );
+//           // return CircularProgressIndicator();
+//         }
+//       },
+//     );
+//   }
+//
+//   Widget _buildMiddle2(BuildContext context) {
+//     return FutureBuilder(
+//       future: connectToViam2(),
+//       builder: (context, snapshot) {
+//         if (snapshot.connectionState == ConnectionState.done) {
+//           // The connection is complete, you can access the result
+//           return Container(
+//             color: Colors.red,
+//             padding: EdgeInsets.all(16),
+//             child: Text(
+//               'Connected to Viam. Robot Power: ${snapshot.data}',
+//
+//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//           );
+//         } else if (snapshot.hasError) {
+//           // If there's an error during the connection, handle it here
+//           return Container(
+//             padding: EdgeInsets.all(16),
+//             child: Text(
+//               'Error connecting to Viam: ${snapshot.error}',
+//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+//             ),
+//           );
+//         } else {
+//           // While the connection is in progress, show a loading indicator
+//           return Container(
+//               padding: EdgeInsets.all(16),
+//               margin: EdgeInsets.all(16),
+//               child: CircularProgressIndicator()
+//           );
+//           // return CircularProgressIndicator();
+//         }
+//       },
+//     );
+//   }
+

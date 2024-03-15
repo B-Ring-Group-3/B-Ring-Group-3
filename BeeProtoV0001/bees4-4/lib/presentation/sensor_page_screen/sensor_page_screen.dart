@@ -57,6 +57,7 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
           tooltip: 'Refresh',
           child: Icon(Icons.refresh),
         ),
+        bottomNavigationBar: _buildBack(context),
       ),
     );
   }

@@ -34,7 +34,7 @@ class LoginScreen extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: CustomImageView(
-                        imagePath: ImageConstant.imgTwemojiHoneybee,
+                        imagePath: ImageConstant.imgBeeRingLogo,
                         height: 103.v,
                         width: 109.h,
                         alignment: Alignment.center,

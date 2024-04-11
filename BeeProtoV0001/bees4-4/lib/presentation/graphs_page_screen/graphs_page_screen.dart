@@ -115,6 +115,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
       centerTitle: true,
       title: Row(
         children: [
+          Spacer(),
           AppbarTitle(text: "Graphs"),
           Spacer(),
           _buildRangeSelect(context),

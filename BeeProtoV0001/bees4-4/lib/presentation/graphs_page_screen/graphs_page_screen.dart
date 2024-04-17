@@ -160,20 +160,21 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   }
 
   Widget _buildGraph(BuildContext context) {
-    return Expanded(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Graph Test'),
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(10),
-          width: double.infinity,
-          height: 300,
-          child: LineChart(
-            LineChartData(borderData: FlBorderData(show: false), lineBarsData: [
-              LineChartBarData(spots: chartData.sublist(0, days)),
-            ]),
-          ),
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        alignment: Alignment.topCenter,
+        width: double.infinity,
+        height: 300,
+        child: LineChart(
+          LineChartData(
+            titlesData: FlTitlesData(
+              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            ),
+            borderData: FlBorderData(show: false), lineBarsData: [
+            LineChartBarData(spots: chartData.sublist(chartData.length-days, chartData.length)),
+          ]),
         ),
       ),
     );

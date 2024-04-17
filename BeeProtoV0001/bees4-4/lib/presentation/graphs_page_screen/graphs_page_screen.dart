@@ -22,6 +22,9 @@ class GraphsPageScreen extends StatefulWidget {
   _GraphsPageScreenState createState() => _GraphsPageScreenState();
 }
 
+int days = 7;
+const List<int> day_range = <int>[1, 7, 14, 30, 90, 180];
+
 class _GraphsPageScreenState extends State<GraphsPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -41,6 +44,11 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     FlSpot(6, 17),
     FlSpot(7, 15),
     FlSpot(8, 20),
+    FlSpot(9, 19),
+    FlSpot(10, 16),
+    FlSpot(11, 17),
+    FlSpot(12, 15),
+    FlSpot(13, 13),
   ];
 
   @override
@@ -54,7 +62,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
           child: Column(
             children: [
               SizedBox(height: 56, width: double.maxFinite),
-              _buildGraph(context),
+              _buildMiddle(context),
             ],
           ),
         ),
@@ -92,20 +100,6 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
             ),
           ),
           ListTile(
-            title: Text('Change Graph'),
-            onTap: () {
-              // Handle item 1 tap
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: Text('Edit Range'),
-            onTap: () {
-              // Handle item 2 tap
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
             title: Text('Export Data'),
             onTap: () {
               // Handle item 3 tap
@@ -134,21 +128,20 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         ),
       ),
       centerTitle: true,
-      title: AppbarTitle(text: "Graphs"),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: HelpSearchDelegate(),
-              query: 'Search Help Pages',
-            );
-          },
-        ),
-      ],
+      title: Row(
+        children: [
+          Spacer(),
+          AppbarTitle(text: "Graphs"),
+          Spacer(),
+          _buildRangeSelect(context),
+        ],
+      ),
       styleType: Style.bgFill,
     );
+  }
+
+  Widget _buildMiddle(BuildContext context) {
+    return _buildGraph(context);
   }
 
   /// Section Widget
@@ -178,11 +171,33 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
           height: 300,
           child: LineChart(
             LineChartData(borderData: FlBorderData(show: false), lineBarsData: [
-              LineChartBarData(spots: chartData),
+              LineChartBarData(spots: chartData.sublist(0, days)),
             ]),
           ),
         ),
       ),
+    );
+  }
+
+  int dropdownValue = day_range[1];
+  Widget _buildRangeSelect(BuildContext context) {
+    return DropdownMenu<int>(
+      initialSelection: day_range[1],
+      onSelected: (int? value) {
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value!;
+          if (value > chartData.length) {
+            days = chartData.length;
+          } else {
+            days = value;
+          }
+        });
+      },
+      dropdownMenuEntries: day_range.map<DropdownMenuEntry<int>>((int value) {
+        return DropdownMenuEntry<int>(
+            value: value, label: value.toString() + " days");
+      }).toList(),
     );
   }
 }

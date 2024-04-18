@@ -13,6 +13,7 @@ import 'package:bees4/core/utils/help_search_delegate.dart';
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
 //import 'package:viam_sdk/widgets.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class GraphsPageScreen extends StatefulWidget {
   GraphsPageScreen({Key? key}) : super(key: key);
@@ -21,20 +22,26 @@ class GraphsPageScreen extends StatefulWidget {
   _GraphsPageScreenState createState() => _GraphsPageScreenState();
 }
 
-int days = 1;
-const List<int> day_range = <int>[1, 7, 30, 90, 180];
-
 class _GraphsPageScreenState extends State<GraphsPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-//class GraphsPageScreen extends StatelessWidget {
-//  GraphsPageScreen({Key? key}) : super(key: key);
-//  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Future<void> _refreshData() async {
     setState(() {
       // Add any logic here to refresh the data
     });
   }
+
+  List<FlSpot> chartData = [
+    FlSpot(0, 1),
+    FlSpot(1, 3),
+    FlSpot(2, 10),
+    FlSpot(3, 7),
+    FlSpot(4, 12),
+    FlSpot(5, 13),
+    FlSpot(6, 17),
+    FlSpot(7, 15),
+    FlSpot(8, 20),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +54,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
           child: Column(
             children: [
               SizedBox(height: 56, width: double.maxFinite),
-              _buildMiddle(context), // Add the new section here
+              _buildGraph(context),
             ],
           ),
         ),
@@ -85,6 +92,20 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
             ),
           ),
           ListTile(
+            title: Text('Change Graph'),
+            onTap: () {
+              // Handle item 1 tap
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
+            title: Text('Edit Range'),
+            onTap: () {
+              // Handle item 2 tap
+              Navigator.pop(context);
+            },
+          ),
+          ListTile(
             title: Text('Export Data'),
             onTap: () {
               // Handle item 3 tap
@@ -113,20 +134,21 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         ),
       ),
       centerTitle: true,
-      title: Row(
-        children: [
-          Spacer(),
-          AppbarTitle(text: "Graphs"),
-          Spacer(),
-          _buildRangeSelect(context),
-        ],
-      ),
+      title: AppbarTitle(text: "Graphs"),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            showSearch(
+              context: context,
+              delegate: HelpSearchDelegate(),
+              query: 'Search Help Pages',
+            );
+          },
+        ),
+      ],
       styleType: Style.bgFill,
     );
-  }
-
-  Widget _buildMiddle(BuildContext context) {
-    return Text("Displaying data from previous ${days} days.");
   }
 
   /// Section Widget
@@ -144,21 +166,109 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     Navigator.pop(context);
   }
 
-  int dropdownValue = day_range.first;
-  Widget _buildRangeSelect(BuildContext context) {
-    return DropdownMenu<int>(
-      initialSelection: day_range.first,
-      onSelected: (int? value) {
-        // This is called when the user selects an item.
-        setState(() {
-          dropdownValue = value!;
-          days = value;
-        });
-      },
-      dropdownMenuEntries: day_range.map<DropdownMenuEntry<int>>((int value) {
-        return DropdownMenuEntry<int>(
-            value: value, label: value.toString() + " days");
-      }).toList(),
+  Widget _buildGraph(BuildContext context) {
+    return Expanded(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text('Graph Test'),
+        ),
+        body: Container(
+          padding: const EdgeInsets.all(10),
+          width: double.infinity,
+          height: 300,
+          child: LineChart(
+            LineChartData(borderData: FlBorderData(show: false), lineBarsData: [
+              LineChartBarData(spots: chartData),
+            ]),
+          ),
+        ),
+      ),
     );
+  }
+}
+
+// Step 2: Call this function from within your widget
+Future<Map<String, dynamic>> connectToViam() async {
+  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
+  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+
+  RobotClient robot;
+  try {
+    robot = await RobotClient.atAddress(
+      host,
+      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+    );
+    print("\n------------------Printing resources-----------------------\n");
+    print(robot.resourceNames);
+
+    Sensor temp = Sensor.fromRobot(robot, "temp");
+    Map<String, dynamic> tempReturnValue =
+        await temp.readings(); // Await the result
+    print("temp get_readings return value: ");
+    print(tempReturnValue);
+
+    // Attempt to close the connection with retry logic
+    const int maxAttempts = 3;
+    int attempts = 0;
+    while (attempts < maxAttempts) {
+      try {
+        await robot.close();
+        await Future.delayed(Duration(seconds: 5));
+        print('Next information-->');
+        break; // Exit the loop if close operation is successful
+      } catch (e) {
+        print(
+            'Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
+        attempts++; // Increment attempts counter
+        await Future.delayed(Duration(seconds: 1)); // Delay before retrying
+      }
+    }
+
+    return tempReturnValue;
+  } catch (e) {
+    print("Error connecting to Viam: $e");
+    throw e; // Re-throw the error to be handled by the caller
+  }
+}
+
+Future<double> connectToViam2() async {
+  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
+  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+
+  await Future.delayed(Duration(seconds: 5));
+  RobotClient robot;
+  try {
+    robot = await RobotClient.atAddress(
+      host,
+      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+    );
+
+    var solarChannel = PowerSensor.fromRobot(robot, "solarChannel");
+    double solarChannelReturnValue = await solarChannel.power();
+    print("solarChannel get_power return value: {solar_channel_return_value}");
+    print(solarChannelReturnValue);
+
+    // Attempt to close the connection with retry logic
+    const int maxAttempts = 3;
+    int attempts = 0;
+    while (attempts < maxAttempts) {
+      try {
+        await robot.close();
+        print('Robot connection closed successfully');
+        break; // Exit the loop if close operation is successful
+      } catch (e) {
+        print(
+            'Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
+        attempts++; // Increment attempts counter
+        await Future.delayed(Duration(seconds: 1)); // Delay before retrying
+      }
+    }
+
+    return solarChannelReturnValue;
+  } catch (e) {
+    print("Error connecting to Viam: $e");
+    throw e; // Re-throw the error to be handled by the caller
   }
 }

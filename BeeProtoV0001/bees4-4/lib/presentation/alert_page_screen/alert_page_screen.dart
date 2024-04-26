@@ -6,23 +6,27 @@ import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 // Import the created search delegate
 import 'package:bees4/core/utils/help_search_delegate.dart';
+
 //import 'package:viam_sdk/protos/service/data_manager.dart';
-import 'package:viam_sdk/protos/app/data.dart'; // Assuming Filter is defined here
+//import 'package:viam_sdk/protos/app/data.dart'; // Assuming Filter is defined here
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
 //import 'package:viam_sdk/widgets.dart';
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
+import 'package:bees4/env.dart';
 
-import 'package:async/async.dart';
-import 'package:collection/collection.dart';
-import 'package:fixnum/fixnum.dart';
-import 'package:viam_sdk/src/gen/google/protobuf/any.pb.dart';
-import 'package:viam_sdk/src/utils.dart';
+//import 'dart:io';
+//import 'dart:math';
+//import 'dart:typed_data';
 
+//import 'package:async/async.dart';
+//import 'package:collection/collection.dart';
+//import 'package:fixnum/fixnum.dart';
+//import 'package:viam_sdk/src/gen/google/protobuf/any.pb.dart';
+//import 'package:viam_sdk/src/utils.dart';
+/* 
 class DataClient {
   final DataServiceClient _dataClient;
   final DataServiceClient _dataSyncClient;
@@ -113,7 +117,7 @@ class DataClient {
   }
 
 }
-
+*/
 class AlertPageScreen extends StatefulWidget {
   AlertPageScreen({Key? key}) : super(key: key);
 
@@ -326,14 +330,14 @@ class _AlertPageScreenState extends State<AlertPageScreen> {
 // Step 2: Call this function from within your widget
 Future<Map<String, dynamic>> connectToViam() async {
   const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  String theApiKeyId = Env.apiKeyId;  //'d8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  String theApiKey = Env.apiKey;  //'5yjnbxukpi671quprcbhu55qfjt00zp4';
   
   RobotClient robot;
   try {
     robot = await RobotClient.atAddress(
       host,
-      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+      RobotClientOptions.withApiKey(theApiKeyId, theApiKey),
     );
     print("\n------------------Printing resources-----------------------\n");
     print(robot.resourceNames);
@@ -343,12 +347,11 @@ Future<Map<String, dynamic>> connectToViam() async {
     print("temp get_readings return value: ");
     print(tempReturnValue);
 
-    
     //from viam.proto.app.data import Filter
 
 //my_filter = Filter(component_name="left_motor")
     //tabular_data = await data_client.tabular_data_by_filter(my_filter)
-    Filter myFilter = Filter(componentName: "temp");
+    //Filter myFilter = Filter(componentName: "temp");
     
     //TabularData tabularData = await ataClient.tabularDataByFilter("temp");
 
@@ -377,15 +380,15 @@ Future<Map<String, dynamic>> connectToViam() async {
 
 Future<double> connectToViam2() async {
   const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  String theApiKeyId = Env.apiKeyId;  //'d8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  String theApiKey = Env.apiKey;  //'5yjnbxukpi671quprcbhu55qfjt00zp4';
 
   await Future.delayed(Duration(seconds: 5));
   RobotClient robot;
   try {
     robot = await RobotClient.atAddress(
       host,
-      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+      RobotClientOptions.withApiKey(theApiKeyId, theApiKey),
     );
     //print("\n------------------Printing resources-----------------------\n");
     //print(robot.resourceNames);
@@ -432,5 +435,3 @@ print(solarChannelReturnValue);
     throw e; // Re-throw the error to be handled by the caller
   }
 }
-
-

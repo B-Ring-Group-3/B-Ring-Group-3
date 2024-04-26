@@ -1,7 +1,7 @@
 import 'package:bees4/core/app_export.dart';
-import 'package:bees4/main.dart';
-import 'package:bees4/widgets/custom_outlined_button.dart';
-import 'package:bees4/widgets/custom_text_form_field.dart';
+//import 'package:bees4/main.dart';
+//import 'package:bees4/widgets/custom_outlined_button.dart';
+//import 'package:bees4/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -34,9 +34,9 @@ class LoginScreen extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: CustomImageView(
-                        imagePath: ImageConstant.imgBeeRingLogo,
-                        height: 120.v,
-                        width: 120.h,
+                        imagePath: ImageConstant.imgTwemojiHoneybee,
+                        height: 103.v,
+                        width: 109.h,
                         alignment: Alignment.center,
                         //margin: EdgeInsets.only(left: 91.h)
                     )
@@ -60,7 +60,7 @@ class LoginScreen extends StatelessWidget {
         }
 
         // Render your application if authenticated
-        return MyApp();
+        //return MyApp();
       },
     );
   }

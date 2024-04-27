@@ -82,7 +82,7 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
 
           if (title == 'Robot Temp and Humidity') {
             Map<String, dynamic> sensorDataTempHum = snapshot.data as Map<String, dynamic>;
-            temperature = double.parse((sensorDataTempHum["temperature_celcius"] ?? 0.0).toStringAsFixed(2));
+            temperature = double.parse((sensorDataTempHum["temperature_celsius"] ?? 0.0).toStringAsFixed(2));
             humidity = double.parse((sensorDataTempHum["relative_humidity_pct"] ?? 0.0).toStringAsFixed(2));
 
           } else if (title == 'Robot Power') {

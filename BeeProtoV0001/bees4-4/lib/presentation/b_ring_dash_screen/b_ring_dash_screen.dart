@@ -1,11 +1,11 @@
 import 'package:bees4/core/app_export.dart';
 //import 'package:bees4/widgets/app_bar/appbar_leading_image.dart';
 import 'package:bees4/widgets/app_bar/appbar_title.dart';
-//import 'package:bees4/widgets/app_bar/appbar_subtitle.dart';
 //import 'package:bees4/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class BRingDashScreen extends StatelessWidget {
   const BRingDashScreen({Key? key}) : super(key: key);
@@ -55,14 +55,14 @@ class BRingDashScreen extends StatelessWidget {
 
   Widget _buildBack(BuildContext context) {
     return CustomElevatedButton(
-      text: "Back",
-      onPressed: () {
-        gotoLogin(context);
-      },
+        text: "Sign Out",
+        onPressed: () async {
+          await FirebaseAuth.instance.signOut();
+          Navigator.of(context).pushReplacementNamed(AppRoutes.loginScreen);
+        },
     );
   }
 
-  // Clickable widget to link to alert screen
   Widget _alerts(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
@@ -105,7 +105,6 @@ class BRingDashScreen extends StatelessWidget {
     ]);
   }
 
-  // Clickable widget to link to sensors screen
   Widget _sensors(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(
@@ -148,7 +147,6 @@ class BRingDashScreen extends StatelessWidget {
     ]);
   }
 
-  // Clickable widget to connect to graphs screen
   Widget _graphs(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Padding(

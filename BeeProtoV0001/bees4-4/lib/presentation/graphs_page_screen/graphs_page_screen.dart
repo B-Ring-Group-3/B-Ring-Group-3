@@ -13,6 +13,7 @@ import 'package:bees4/core/utils/help_search_delegate.dart';
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
 //import 'package:viam_sdk/widgets.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class GraphsPageScreen extends StatefulWidget {
   GraphsPageScreen({Key? key}) : super(key: key);
@@ -21,17 +22,34 @@ class GraphsPageScreen extends StatefulWidget {
   _GraphsPageScreenState createState() => _GraphsPageScreenState();
 }
 
+int days = 7;
+const List<int> day_range = <int>[1, 7, 14, 30, 90, 180];
+
 class _GraphsPageScreenState extends State<GraphsPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-//class GraphsPageScreen extends StatelessWidget {
-//  GraphsPageScreen({Key? key}) : super(key: key);
-//  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Future<void> _refreshData() async {
     setState(() {
       // Add any logic here to refresh the data
     });
   }
+
+  List<FlSpot> chartData = [
+    FlSpot(0, 1),
+    FlSpot(1, 3),
+    FlSpot(2, 10),
+    FlSpot(3, 7),
+    FlSpot(4, 12),
+    FlSpot(5, 13),
+    FlSpot(6, 17),
+    FlSpot(7, 15),
+    FlSpot(8, 20),
+    FlSpot(9, 19),
+    FlSpot(10, 16),
+    FlSpot(11, 17),
+    FlSpot(12, 15),
+    FlSpot(13, 13),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -44,19 +62,12 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
           child: Column(
             children: [
               SizedBox(height: 56, width: double.maxFinite),
-              _buildMiddle(context), // Add the new section here
-              //Spacer(),
-              _buildMiddle2(context), // Add the new section here
+              _buildMiddle(context),
             ],
           ),
         ),
         bottomNavigationBar: _buildBack(context),
         drawer: _buildDrawer(context),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _refreshData,
-          tooltip: 'Refresh',
-          child: Icon(Icons.refresh),
-        ),
       ),
     );
   }
@@ -73,34 +84,20 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
             child: Text(
               'Graph Settings',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: 24.0,
-                fontFamily: 'robotoBold',
-                shadows: [
-                  Shadow(
-                    color: Colors.black.withOpacity(
-                        0.5), // Adjust opacity and color as needed
-                    offset: Offset(
-                        0, 2), // Adjust the offset based on your design
-                    blurRadius:
-                        4, // Adjust the blur radius based on your design
-                  ),
-                ]),
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontFamily: 'robotoBold',
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(
+                          0.5), // Adjust opacity and color as needed
+                      offset: Offset(
+                          0, 2), // Adjust the offset based on your design
+                      blurRadius:
+                          4, // Adjust the blur radius based on your design
+                    ),
+                  ]),
             ),
-          ),
-          ListTile(
-            title: Text('Change Graph'),
-            onTap: () {
-              // Handle item 1 tap
-              Navigator.pop(context);
-            },
-          ),
-          ListTile(
-            title: Text('Edit Range'),
-            onTap: () {
-              // Handle item 2 tap
-              Navigator.pop(context);
-            },
           ),
           ListTile(
             title: Text('Export Data'),
@@ -131,83 +128,20 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         ),
       ),
       centerTitle: true,
-      title: AppbarTitle(text: "Graphs"),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: HelpSearchDelegate(),
-              query: 'Search Help Pages',
-            );
-          },
-        ),
-      ],
+      title: Row(
+        children: [
+          Spacer(),
+          AppbarTitle(text: "Graphs"),
+          Spacer(),
+          _buildRangeSelect(context),
+        ],
+      ),
       styleType: Style.bgFill,
     );
   }
 
-  // Display robot temperature
   Widget _buildMiddle(BuildContext context) {
-    return FutureBuilder(
-      future: connectToViam(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // The connection is complete, you can access the result
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Connected to Viam. Robot temp: ${snapshot.data}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          // If there's an error during the connection, handle it here
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Error connecting to Viam: ${snapshot.error}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else {
-          // While the connection is in progress, show a loading indicator
-          return CircularProgressIndicator();
-        }
-      },
-    );
-  }
-
-  // Display robot power use
-  Widget _buildMiddle2(BuildContext context) {
-    return FutureBuilder(
-      future: connectToViam2(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          // The connection is complete, you can access the result
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Connected to Viam. Robot Power: ${snapshot.data}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else if (snapshot.hasError) {
-          // If there's an error during the connection, handle it here
-          return Container(
-            padding: EdgeInsets.all(16),
-            child: Text(
-              'Error connecting to Viam: ${snapshot.error}',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          );
-        } else {
-          // While the connection is in progress, show a loading indicator
-          return CircularProgressIndicator();
-        }
-      },
-    );
+    return _buildGraph(context);
   }
 
   /// Section Widget
@@ -223,6 +157,49 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   /// Navigates back to the previous screen.
   void onBackPressed(BuildContext context) {
     Navigator.pop(context);
+  }
+
+  Widget _buildGraph(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        alignment: Alignment.topCenter,
+        width: double.infinity,
+        height: 300,
+        child: LineChart(
+          LineChartData(
+            titlesData: FlTitlesData(
+              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            ),
+            borderData: FlBorderData(show: false), lineBarsData: [
+            LineChartBarData(spots: chartData.sublist(chartData.length-days, chartData.length)),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  int dropdownValue = day_range[1];
+  Widget _buildRangeSelect(BuildContext context) {
+    return DropdownMenu<int>(
+      initialSelection: day_range[1],
+      onSelected: (int? value) {
+        // This is called when the user selects an item.
+        setState(() {
+          dropdownValue = value!;
+          if (value > chartData.length) {
+            days = chartData.length;
+          } else {
+            days = value;
+          }
+        });
+      },
+      dropdownMenuEntries: day_range.map<DropdownMenuEntry<int>>((int value) {
+        return DropdownMenuEntry<int>(
+            value: value, label: value.toString() + " days");
+      }).toList(),
+    );
   }
 }
 

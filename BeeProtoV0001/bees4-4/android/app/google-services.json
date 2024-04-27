@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "210411111773",
+    "firebase_url": "https://beering-824d7-default-rtdb.firebaseio.com",
+    "project_id": "beering-824d7",
+    "storage_bucket": "beering-824d7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:210411111773:android:19ebefabb057f9d7c1d4b4",
+        "android_client_info": {
+          "package_name": "com.bees.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "210411111773-mdah2ia1l1a6kdvtuniiokppgp40gp78.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bees.app",
+            "certificate_hash": "9f3c550cc59f48800de122322150f61887be7b2a"
+          }
+        },
+        {
+          "client_id": "210411111773-eajqijf8n77q4ndmu2c7goiehv2nkolj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOkVb80WQ3OSmxi1HA5qgEjwLLktyQhJE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "210411111773-eajqijf8n77q4ndmu2c7goiehv2nkolj.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "210411111773-den95douqtosrj7h8u6ad5d0hrobv0sp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bees.app"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -7,3 +7,17 @@ smart_machine_app/macos/Flutter/GeneratedPluginRegistrant.swift
 smart_machine_app/windows/flutter/generated_plugin_registrant.cc
 smart_machine_app/windows/flutter/generated_plugin_registrant.h
 smart_machine_app/windows/flutter/generated_plugins.cmake
+smart_machine_app/ios/Runner/GeneratedPluginRegistrant.h
+smart_machine_app/ios/Runner/GeneratedPluginRegistrant.m
+smart_machine_app/macos/Flutter/ephemeral/Flutter-Generated.xcconfig
+smart_machine_app/macos/Flutter/ephemeral/flutter_export_environment.sh
+smart_machine_app/ios/Flutter/Generated.xcconfig
+smart_machine_app/ios/Flutter/flutter_export_environment.sh
+smart_machine_app/android/local.properties
+smart_machine_app/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java
+smart_machine_app/.flutter-plugins-dependencies
+smart_machine_app/.flutter-plugins
+smart_machine_app/.dart_tool/package_config_subset
+smart_machine_app/.dart_tool/version
+smart_machine_app/.dart_tool/package_config.json
+smart_machine_app/.dart_tool/dartpad/web_plugin_registrant.dart

@@ -7,7 +7,7 @@ import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // Import the created search delegate
-import 'package:bees4/core/utils/help_search_delegate.dart';
+//import 'package:bees4/core/utils/help_search_delegate.dart';
 //import 'package:viam_sdk/protos/service/data_manager.dart';
 
 // Step 1: Import the viam_sdk

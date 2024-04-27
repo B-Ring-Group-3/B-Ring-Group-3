@@ -1,6 +1,6 @@
 import 'package:bees4/core/app_export.dart';
 //import 'package:bees4/widgets/app_bar/appbar_leading_image.dart';
-import 'package:bees4/widgets/app_bar/appbar_title.dart';
+import 'package:bees4/widgets/app_bar/appbar_subtitle.dart';
 //import 'package:bees4/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
@@ -42,7 +42,7 @@ class BRingDashScreen extends StatelessWidget {
         children: [
           Spacer(),
 
-          AppbarTitle(text: "Dashboard"),
+          AppbarSubtitle(text: "Dashboard"),
           Spacer(),
 
           SizedBox(width: 20), // Add some spacing between title and dropdown

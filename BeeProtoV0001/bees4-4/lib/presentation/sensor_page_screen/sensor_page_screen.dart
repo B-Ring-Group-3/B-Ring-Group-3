@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 // Import the created search delegate
 import 'package:bees4/core/utils/help_search_delegate.dart';
 //import 'package:viam_sdk/protos/service/data_manager.dart';
-
+import 'package:bees4/env.dart';
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
 //import 'package:viam_sdk/widgets.dart';
@@ -257,14 +257,14 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
 // Step 2: Call this function from within your widget
 Future<Map<String, dynamic>> connectToViam() async {
   const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+   String theApiKeyId = Env.apiKeyId;  //'d8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  String theApiKey = Env.apiKey;  //'5yjnbxukpi671quprcbhu55qfjt00zp4';
 
   RobotClient robot;
   try {
     robot = await RobotClient.atAddress(
       host,
-      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+      RobotClientOptions.withApiKey(theApiKeyId, theApiKey),
     );
     print("\n------------------Printing resources-----------------------\n");
     print(robot.resourceNames);
@@ -301,15 +301,15 @@ Future<Map<String, dynamic>> connectToViam() async {
 
 Future<double> connectToViam2() async {
   const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  String theApiKeyId = Env.apiKeyId;  //'d8fc8e31-8cc0-45c6-9cc4-631a952d97af';
+  String theApiKey = Env.apiKey;  //'5yjnbxukpi671quprcbhu55qfjt00zp4';
 
   await Future.delayed(Duration(seconds: 5));
   RobotClient robot;
   try {
     robot = await RobotClient.atAddress(
       host,
-      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+      RobotClientOptions.withApiKey(theApiKeyId, theApiKey),
     );
 
     var solarChannel = PowerSensor.fromRobot(robot, "solarChannel");

@@ -62,7 +62,7 @@ class ThemeHelper {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.black,
-          backgroundColor: Colors.amber[500],
+          backgroundColor: colorScheme.primary,
           side: BorderSide(
             color: appTheme.black900,
             width: 2.h,
@@ -82,7 +82,10 @@ class ThemeHelper {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: Colors.amber[800],
+          foregroundColor: colorScheme.secondary,
+          textStyle: TextStyle(
+            fontSize: 20,
+          )
         )
       )
     );
@@ -149,7 +152,7 @@ class ColorSchemes {
   static final primaryColorScheme = ColorScheme.light(
     // Primary colors
     primary: Color(0XFFFFD233),
-    secondary: Color.fromARGB(202, 209, 164, 15),
+    secondary: Color.fromARGB(255, 184, 136, 4),
     primaryContainer: Color(0XFF31373D),
     secondaryContainer: Color(0XFFFFC600),
 

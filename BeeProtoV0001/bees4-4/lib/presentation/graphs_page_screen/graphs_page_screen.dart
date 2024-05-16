@@ -22,6 +22,8 @@ class GraphsPageScreen extends StatefulWidget {
   _GraphsPageScreenState createState() => _GraphsPageScreenState();
 }
 
+bool temp = true;
+bool humid = true;
 int days = 7;
 const List<int> day_range = <int>[1, 7, 14, 30, 90, 180];
 
@@ -49,6 +51,23 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     FlSpot(11, 17),
     FlSpot(12, 15),
     FlSpot(13, 13),
+  ];
+
+  List<FlSpot> chartData2 = [
+    FlSpot(0, 17),
+    FlSpot(1, 18),
+    FlSpot(2, 15),
+    FlSpot(3, 14),
+    FlSpot(4, 18),
+    FlSpot(5, 16),
+    FlSpot(6, 14),
+    FlSpot(7, 11),
+    FlSpot(8, 9),
+    FlSpot(9, 10),
+    FlSpot(10, 9),
+    FlSpot(11, 8),
+    FlSpot(12, 6),
+    FlSpot(13, 7),
   ];
 
   @override
@@ -141,7 +160,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   }
 
   Widget _buildMiddle(BuildContext context) {
-    return _buildGraph(context);
+    return _buildGraph(context, temp, humid);
   }
 
   /// Section Widget
@@ -159,7 +178,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     Navigator.pop(context);
   }
 
-  Widget _buildGraph(BuildContext context) {
+  Widget _buildGraph(BuildContext context, bool temp, bool humid) {
     return Center(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -168,13 +187,27 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         height: 300,
         child: LineChart(
           LineChartData(
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            ),
-            borderData: FlBorderData(show: false), lineBarsData: [
-            LineChartBarData(spots: chartData.sublist(chartData.length-days, chartData.length)),
-          ]),
+              titlesData: FlTitlesData(
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              ),
+              borderData: FlBorderData(show: false),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: chartData.sublist(
+                      chartData.length - days, chartData.length),
+                  show: temp,
+                  color: Colors.red,
+                ),
+                LineChartBarData(
+                  spots: chartData2.sublist(
+                      chartData2.length - days, chartData2.length),
+                  show: humid,
+                  color: Colors.blue,
+                ),
+              ]),
         ),
       ),
     );

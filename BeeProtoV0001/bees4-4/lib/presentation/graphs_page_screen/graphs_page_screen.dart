@@ -160,7 +160,19 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   }
 
   Widget _buildMiddle(BuildContext context) {
-    return _buildGraph(context, temp, humid);
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _tempButton(context),
+            _humidButton(context)
+          ]
+        ),
+        SizedBox(height: 20),
+        _buildGraph(context, temp, humid),
+      ],
+    );
   }
 
   /// Section Widget
@@ -170,6 +182,66 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
       onPressed: () {
         onBackPressed(context);
       },
+    );
+  }
+
+  Widget _tempButton(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          temp = !temp;
+        });
+      },
+      style: OutlinedButton.styleFrom(
+          foregroundColor: temp ? Colors.white : Colors.black,
+          backgroundColor: temp ? Colors.red : Colors.transparent,
+          side: BorderSide(
+            color: appTheme.black900,
+            width: 2.h,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.h),
+          ),
+          visualDensity: const VisualDensity(
+            vertical: -4,
+            horizontal: -4,
+          ),
+          padding: EdgeInsets.all(26),
+          textStyle: TextStyle(
+            fontSize: 20,
+          )
+        ),
+      child: Text("Temperature"),
+    );
+  }
+
+  Widget _humidButton(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          humid = !humid;
+        });
+      },
+      style: OutlinedButton.styleFrom(
+          foregroundColor: humid ? Colors.white : Colors.black,
+          backgroundColor: humid ? Colors.blue : Colors.transparent,
+          side: BorderSide(
+            color: appTheme.black900,
+            width: 2.h,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.h),
+          ),
+          visualDensity: const VisualDensity(
+            vertical: -4,
+            horizontal: -4,
+          ),
+          padding: EdgeInsets.all(26),
+          textStyle: TextStyle(
+            fontSize: 20,
+          )
+        ),
+      child: Text("Humidity"),
     );
   }
 

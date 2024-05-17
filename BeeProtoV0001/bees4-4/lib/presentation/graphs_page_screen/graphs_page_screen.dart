@@ -36,38 +36,38 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     });
   }
 
-  List<FlSpot> chartData = [
-    FlSpot(0, 1),
-    FlSpot(1, 3),
-    FlSpot(2, 10),
-    FlSpot(3, 7),
-    FlSpot(4, 12),
-    FlSpot(5, 13),
-    FlSpot(6, 17),
-    FlSpot(7, 15),
-    FlSpot(8, 20),
-    FlSpot(9, 19),
-    FlSpot(10, 16),
-    FlSpot(11, 17),
-    FlSpot(12, 15),
-    FlSpot(13, 13),
+  List<FlSpot> tempData = [
+    FlSpot(0, 65),
+    FlSpot(1, 62),
+    FlSpot(2, 58),
+    FlSpot(3, 57),
+    FlSpot(4, 58),
+    FlSpot(5, 56),
+    FlSpot(6, 57),
+    FlSpot(7, 59),
+    FlSpot(8, 62),
+    FlSpot(9, 66),
+    FlSpot(10, 65),
+    FlSpot(11, 68),
+    FlSpot(12, 72),
+    FlSpot(13, 71),
   ];
 
-  List<FlSpot> chartData2 = [
-    FlSpot(0, 17),
-    FlSpot(1, 18),
-    FlSpot(2, 15),
-    FlSpot(3, 14),
-    FlSpot(4, 18),
-    FlSpot(5, 16),
-    FlSpot(6, 14),
-    FlSpot(7, 11),
-    FlSpot(8, 9),
-    FlSpot(9, 10),
-    FlSpot(10, 9),
-    FlSpot(11, 8),
-    FlSpot(12, 6),
-    FlSpot(13, 7),
+  List<FlSpot> humidData = [
+    FlSpot(0, 61),
+    FlSpot(1, 60.5),
+    FlSpot(2, 60),
+    FlSpot(3, 61),
+    FlSpot(4, 62),
+    FlSpot(5, 60),
+    FlSpot(6, 58.5),
+    FlSpot(7, 59),
+    FlSpot(8, 59.5),
+    FlSpot(9, 60.5),
+    FlSpot(10, 60),
+    FlSpot(11, 61),
+    FlSpot(12, 59),
+    FlSpot(13, 63),
   ];
 
   @override
@@ -268,14 +268,14 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
               borderData: FlBorderData(show: false),
               lineBarsData: [
                 LineChartBarData(
-                  spots: chartData.sublist(
-                      chartData.length - days, chartData.length),
+                  spots: tempData.sublist(
+                      tempData.length - days, tempData.length),
                   show: temp,
                   color: Colors.red,
                 ),
                 LineChartBarData(
-                  spots: chartData2.sublist(
-                      chartData2.length - days, chartData2.length),
+                  spots: humidData.sublist(
+                      humidData.length - days, humidData.length),
                   show: humid,
                   color: Colors.blue,
                 ),
@@ -293,8 +293,8 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
-          if (value > chartData.length) {
-            days = chartData.length;
+          if (value > tempData.length) {
+            days = tempData.length;
           } else {
             days = value;
           }

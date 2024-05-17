@@ -5,6 +5,7 @@ import 'package:bees4/presentation/sensor_page_screen/sensor_page_screen.dart';
 import 'package:bees4/presentation/alert_page_screen/alert_page_screen.dart';
 import 'package:bees4/presentation/graphs_page_screen/graphs_page_screen.dart';
 import 'package:bees4/presentation/app_navigation_screen/app_navigation_screen.dart';
+import 'package:bees4/presentation/add_hive_screen/add_hive_screen.dart';
 
 class AppRoutes {
   static const String loginScreen = '/login_screen';
@@ -19,12 +20,15 @@ class AppRoutes {
 
   static const String appNavigationScreen = '/app_navigation_screen';
 
+  static const String addHiveScreen = '/add_hive_screen';
+
   static Map<String, WidgetBuilder> routes = {
     loginScreen: (context) => LoginScreen(),
     bRingDashScreen: (context) => BRingDashScreen(),
     sensorPageScreen: (context) => SensorPageScreen(),
     alertPageScreen: (context) => AlertPageScreen(),
     graphsPageScreen: (context) => GraphsPageScreen(),
-    appNavigationScreen: (context) => AppNavigationScreen()
+    appNavigationScreen: (context) => AppNavigationScreen(),
+    addHiveScreen: (context) => AddHiveScreen()
   };
 }

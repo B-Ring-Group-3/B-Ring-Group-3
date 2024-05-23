@@ -9,6 +9,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 // Import the created search delegate
 import 'package:bees4/core/utils/help_search_delegate.dart';
 //import 'package:viam_sdk/protos/service/data_manager.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:bees4/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
@@ -23,6 +26,7 @@ class SensorPageScreen extends StatefulWidget {
 
 class _SensorPageScreenState extends State<SensorPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  //final FirestoreService _firestoreService = FirestoreService();
 
 //class SensorPageScreen extends StatelessWidget {
 //SensorPageScreen({Key? key}) : super(key: key);
@@ -82,7 +86,7 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
 
           if (title == 'Robot Temp and Humidity') {
             Map<String, dynamic> sensorDataTempHum = snapshot.data as Map<String, dynamic>;
-            temperature = double.parse((sensorDataTempHum["temperature_celcius"] ?? 0.0).toStringAsFixed(2));
+            temperature = sensorDataTempHum["temperature_celsius"] ?? 0.0;
             humidity = double.parse((sensorDataTempHum["relative_humidity_pct"] ?? 0.0).toStringAsFixed(2));
 
           } else if (title == 'Robot Power') {
@@ -109,7 +113,7 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
                     style: TextStyle(fontSize: 16),
                   ),
                   Text(
-                    '$temperature °C',
+                    '${temperature.toStringAsFixed(2)} °C',
                     style: TextStyle(fontSize: 16),
                   ),
                   SizedBox(height: 10),
@@ -256,53 +260,85 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
 
 // Step 2: Call this function from within your widget
 Future<Map<String, dynamic>> connectToViam() async {
-  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  final User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    throw Exception('No user signed in.');
+  }
+
+  DocumentSnapshot robotDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('robots')
+      .doc('robot')
+      .get();
+
+  if (!robotDoc.exists) {
+    throw Exception('Robot data not found for user ${user.uid}');
+  }
+
+  Map<String, dynamic> robotData = robotDoc.data() as Map<String, dynamic>;
+  final host = robotData['host'];
+  final apiKeyId = robotData['apiKeyId'];
+  final apiKey = robotData['apiKey'];
 
   RobotClient robot;
   try {
-    robot = await RobotClient.atAddress(
-      host,
-      RobotClientOptions.withApiKey(apiKeyId, apiKey),
-    );
-    print("\n------------------Printing resources-----------------------\n");
-    print(robot.resourceNames);
-
+    robot = await RobotClient.atAddress(host, RobotClientOptions.withApiKey(apiKeyId, apiKey));
     Sensor temp = Sensor.fromRobot(robot, "temp");
-    Map<String, dynamic> tempReturnValue =
-        await temp.readings(); // Await the result
-    print("temp get_readings return value: ");
-    print(tempReturnValue);
+    Map<String, dynamic> tempReturnValue = await temp.readings();
+    double temperature = tempReturnValue["temperature_celsius"] ?? 0.0;
 
-    // Attempt to close the connection with retry logic
-    const int maxAttempts = 3;
-    int attempts = 0;
-    while (attempts < maxAttempts) {
-      try {
-        await robot.close();
-        await Future.delayed(Duration(seconds: 5));
-        print('Next information-->');
-        break; // Exit the loop if close operation is successful
-      } catch (e) {
-        print(
-            'Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
-        attempts++; // Increment attempts counter
-        await Future.delayed(Duration(seconds: 1)); // Delay before retrying
-      }
+    // Now, instead of adding the temperature to the robot document, add it to the temperatures collection
+    var temperatureDocRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('robots')
+        .doc('robot')
+        .collection('temperatures')
+        .doc();  // Firestore generates a unique ID for each temperature record
+
+    await temperatureDocRef.set({
+      'temperature_celsius': temperature,
+      'timestamp': FieldValue.serverTimestamp()  // Use server timestamp to ensure consistency
+    });
+
+    // Close the robot connection
+    try {
+      await robot.close();
+    } catch (e) {
+      print('Error closing robot connection: $e');
     }
 
     return tempReturnValue;
   } catch (e) {
     print("Error connecting to Viam: $e");
-    throw e; // Re-throw the error to be handled by the caller
+    throw e;
   }
 }
 
+
 Future<double> connectToViam2() async {
-  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  final User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    throw Exception('No user signed in.');
+  }
+
+  DocumentSnapshot robotDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('robots')
+      .doc('robot')
+      .get();
+
+  if (!robotDoc.exists) {
+    throw Exception('Robot data not found for user ${user.uid}');
+  }
+
+  Map<String, dynamic> robotData = robotDoc.data() as Map<String, dynamic>;
+
+  final host = robotData['host'];
+  final apiKeyId = robotData['apiKeyId'];
+  final apiKey = robotData['apiKey'];
 
   await Future.delayed(Duration(seconds: 5));
   RobotClient robot;

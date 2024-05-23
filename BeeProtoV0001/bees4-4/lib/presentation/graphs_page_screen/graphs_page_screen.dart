@@ -7,8 +7,13 @@ import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // Import the created search delegate
-import 'package:bees4/core/utils/help_search_delegate.dart';
+//import 'package:bees4/core/utils/help_search_delegate.dart';
 //import 'package:viam_sdk/protos/service/data_manager.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:bees4/firestore_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'dart:math';
+
 
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
@@ -29,10 +34,52 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> _refreshData() async {
-    setState(() {
-      // Add any logic here to refresh the data
-    });
+  User? user = FirebaseAuth.instance.currentUser;
+  if (user != null) {
+
+
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+    .collection('users')
+    .doc(user.uid)
+    .collection('robots')
+    .doc('robot')  // Assuming 'robot' is the ID of the specific robot
+    .collection('temperatures')
+    .orderBy('timestamp', descending: true)
+    .limit(12)
+    .get();
+
+
+
+    if (snapshot.docs.isEmpty) {
+      print('No data found.');
+    } else {
+      List<FlSpot> newData = [];
+      int index = 0;
+      for (var doc in snapshot.docs) {
+        var data = doc.data();
+        if (data is Map<String, dynamic>) {
+          if (data.containsKey('temperature_celsius')) {
+            double temp = (data['temperature_celsius'] as num?)?.toDouble() ?? 0.0;
+            newData.add(FlSpot(index.toDouble(), temp));
+            print('Index: $index, Temperature: $temp'); // Logging each temperature point
+          } else {
+            print('Temperature data missing in document: ${doc.id}');
+          }
+        }
+        index++;
+      }
+      print('Total data points fetched: ${newData.length}'); // Logging total points
+
+      setState(() {
+        chartData = newData.reversed.toList();
+      });
+    }
+  } else {
+    print('No user signed in.');
   }
+}
+
 
   List<FlSpot> chartData = [
     FlSpot(0, 1),
@@ -63,11 +110,18 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
             children: [
               SizedBox(height: 56, width: double.maxFinite),
               _buildMiddle(context),
+              
             ],
+            
           ),
         ),
         bottomNavigationBar: _buildBack(context),
         drawer: _buildDrawer(context),
+        floatingActionButton: FloatingActionButton(
+        onPressed: _refreshData,
+        tooltip: 'Refresh',
+        child: Icon(Icons.refresh),
+      ),
       ),
     );
   }
@@ -173,7 +227,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
               topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
             ),
             borderData: FlBorderData(show: false), lineBarsData: [
-            LineChartBarData(spots: chartData.sublist(chartData.length-days, chartData.length)),
+            LineChartBarData(spots: chartData.sublist(max(0, chartData.length-days), chartData.length)),
           ]),
         ),
       ),

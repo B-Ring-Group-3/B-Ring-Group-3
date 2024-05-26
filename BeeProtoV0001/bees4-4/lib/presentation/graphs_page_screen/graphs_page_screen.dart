@@ -49,7 +49,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     .doc('robot')  // Assuming 'robot' is the ID of the specific robot
     .collection('temperatures')
     .orderBy('timestamp', descending: true)
-    .limit(12)
+    .limit(180)
     .get();
 
 
@@ -328,12 +328,12 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
                   show: temp,
                   color: Colors.red,
                 ),
-                LineChartBarData(
-                  spots: humidData.sublist(
-                      humidData.length - days, humidData.length),
-                  show: humid,
-                  color: Colors.blue,
-                ),
+                //LineChartBarData(
+                //  spots: humidData.sublist(
+                //      humidData.length - days, humidData.length),
+                //  show: humid,
+                //  color: Colors.blue,
+                //),
               ]),
         ),
       ),
@@ -348,8 +348,8 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
-          if (value > tempData.length) {
-            days = tempData.length;
+          if (value > chartData.length) {
+            days = chartData.length;
           } else {
             days = value;
           }

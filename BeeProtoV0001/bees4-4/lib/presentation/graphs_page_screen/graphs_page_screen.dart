@@ -27,8 +27,11 @@ class GraphsPageScreen extends StatefulWidget {
   _GraphsPageScreenState createState() => _GraphsPageScreenState();
 }
 
+bool temp = true;
+bool humid = true;
 int days = 7;
 const List<int> day_range = <int>[1, 7, 14, 30, 90, 180];
+List<FlSpot> chartData = [];
 
 class _GraphsPageScreenState extends State<GraphsPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -37,7 +40,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   if (user != null) {
 
-
+  
 
     QuerySnapshot snapshot = await FirebaseFirestore.instance
     .collection('users')
@@ -81,21 +84,38 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
 }
 
 
-  List<FlSpot> chartData = [
-    FlSpot(0, 1),
-    FlSpot(1, 3),
-    FlSpot(2, 10),
-    FlSpot(3, 7),
-    FlSpot(4, 12),
-    FlSpot(5, 13),
-    FlSpot(6, 17),
-    FlSpot(7, 15),
-    FlSpot(8, 20),
-    FlSpot(9, 19),
-    FlSpot(10, 16),
-    FlSpot(11, 17),
-    FlSpot(12, 15),
-    FlSpot(13, 13),
+  List<FlSpot> tempData = [
+    FlSpot(0, 65),
+    FlSpot(1, 62),
+    FlSpot(2, 58),
+    FlSpot(3, 57),
+    FlSpot(4, 58),
+    FlSpot(5, 56),
+    FlSpot(6, 57),
+    FlSpot(7, 59),
+    FlSpot(8, 62),
+    FlSpot(9, 66),
+    FlSpot(10, 65),
+    FlSpot(11, 68),
+    FlSpot(12, 72),
+    FlSpot(13, 71),
+  ];
+
+  List<FlSpot> humidData = [
+    FlSpot(0, 61),
+    FlSpot(1, 60.5),
+    FlSpot(2, 60),
+    FlSpot(3, 61),
+    FlSpot(4, 62),
+    FlSpot(5, 60),
+    FlSpot(6, 58.5),
+    FlSpot(7, 59),
+    FlSpot(8, 59.5),
+    FlSpot(9, 60.5),
+    FlSpot(10, 60),
+    FlSpot(11, 61),
+    FlSpot(12, 59),
+    FlSpot(13, 63),
   ];
 
   @override
@@ -195,7 +215,19 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   }
 
   Widget _buildMiddle(BuildContext context) {
-    return _buildGraph(context);
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _tempButton(context),
+            _humidButton(context)
+          ]
+        ),
+        SizedBox(height: 20),
+        _buildGraph(context, temp, humid),
+      ],
+    );
   }
 
   /// Section Widget
@@ -208,12 +240,72 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     );
   }
 
+  Widget _tempButton(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          temp = !temp;
+        });
+      },
+      style: OutlinedButton.styleFrom(
+          foregroundColor: temp ? Colors.white : Colors.black,
+          backgroundColor: temp ? Colors.red : Colors.transparent,
+          side: BorderSide(
+            color: appTheme.black900,
+            width: 2.h,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.h),
+          ),
+          visualDensity: const VisualDensity(
+            vertical: -4,
+            horizontal: -4,
+          ),
+          padding: EdgeInsets.all(26),
+          textStyle: TextStyle(
+            fontSize: 20,
+          )
+        ),
+      child: Text("Temperature"),
+    );
+  }
+
+  Widget _humidButton(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () {
+        setState(() {
+          humid = !humid;
+        });
+      },
+      style: OutlinedButton.styleFrom(
+          foregroundColor: humid ? Colors.white : Colors.black,
+          backgroundColor: humid ? Colors.blue : Colors.transparent,
+          side: BorderSide(
+            color: appTheme.black900,
+            width: 2.h,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.h),
+          ),
+          visualDensity: const VisualDensity(
+            vertical: -4,
+            horizontal: -4,
+          ),
+          padding: EdgeInsets.all(26),
+          textStyle: TextStyle(
+            fontSize: 20,
+          )
+        ),
+      child: Text("Humidity"),
+    );
+  }
+
   /// Navigates back to the previous screen.
   void onBackPressed(BuildContext context) {
     Navigator.pop(context);
   }
 
-  Widget _buildGraph(BuildContext context) {
+  Widget _buildGraph(BuildContext context, bool temp, bool humid) {
     return Center(
       child: Container(
         padding: const EdgeInsets.all(16),
@@ -222,13 +314,27 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         height: 300,
         child: LineChart(
           LineChartData(
-            titlesData: FlTitlesData(
-              leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-              topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            ),
-            borderData: FlBorderData(show: false), lineBarsData: [
-            LineChartBarData(spots: chartData.sublist(max(0, chartData.length-days), chartData.length)),
-          ]),
+              titlesData: FlTitlesData(
+                leftTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles:
+                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+              ),
+              borderData: FlBorderData(show: false),
+              lineBarsData: [
+                LineChartBarData(
+                  spots: chartData.sublist(
+                      max(0,chartData.length - days), chartData.length),
+                  show: temp,
+                  color: Colors.red,
+                ),
+                LineChartBarData(
+                  spots: humidData.sublist(
+                      humidData.length - days, humidData.length),
+                  show: humid,
+                  color: Colors.blue,
+                ),
+              ]),
         ),
       ),
     );
@@ -242,8 +348,8 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         // This is called when the user selects an item.
         setState(() {
           dropdownValue = value!;
-          if (value > chartData.length) {
-            days = chartData.length;
+          if (value > tempData.length) {
+            days = tempData.length;
           } else {
             days = value;
           }

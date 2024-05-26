@@ -14,52 +14,65 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color? login_primary_color = Color.fromARGB(255, 184, 136, 4);
+    final ThemeData theme = Theme.of(context);
+    final loginTheme = theme.copyWith(
+      colorScheme: theme.colorScheme.copyWith(
+        primary: login_primary_color,
+      ),
+      textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+        foregroundColor: login_primary_color,
+      )),
+    );
     return StreamBuilder<User?>(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return SignInScreen(
-              subtitleBuilder: (context, action) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    action == AuthAction.signIn
-                        ? 'Welcome to Bee Ring! Please sign in to continue.'
-                        : 'Welcome to Bee Ring! Please create an account to continue',
-                  ),
-                );
-              },
-              headerBuilder: (context, constraints, _) {
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: AspectRatio(
-                    aspectRatio: 1,
-                    child: CustomImageView(
-                        imagePath: ImageConstant.imgBeeRingLogo,
-                        height: 120.v,
-                        width: 120.h,
-                        alignment: Alignment.center,
-                        //margin: EdgeInsets.only(left: 91.h)
-                    )
-                  ),
-                );
-              },
-              providerConfigs: [
-                EmailProviderConfiguration(),
-                GoogleProviderConfiguration(
-                  clientId: '210411111773-eajqijf8n77q4ndmu2c7goiehv2nkolj.apps.googleusercontent.com',
-                )
-              ],
-
-          );
-        }
-        else{
+          return Theme(
+              data: loginTheme,
+              child: SignInScreen(
+                subtitleBuilder: (context, action) {
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      action == AuthAction.signIn
+                          ? 'Welcome to Bee Ring! Please sign in to continue.'
+                          : 'Welcome to Bee Ring! Please create an account to continue',
+                    ),
+                  );
+                },
+                headerBuilder: (context, constraints, _) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: AspectRatio(
+                        aspectRatio: 1,
+                        child: CustomImageView(
+                          imagePath: ImageConstant.imgBeeRingLogo,
+                          height: 120.v,
+                          width: 120.h,
+                          alignment: Alignment.center,
+                          //margin: EdgeInsets.only(left: 91.h)
+                        )),
+                  );
+                },
+                providerConfigs: [
+                  EmailProviderConfiguration(),
+                  GoogleProviderConfiguration(
+                    clientId:
+                        '210411111773-eajqijf8n77q4ndmu2c7goiehv2nkolj.apps.googleusercontent.com',
+                  )
+                ],
+              ));
+        } else {
           final User? user = snapshot.data;
           if (user != null) {
             final AuthService authService = AuthService();
             print('User signed in: ${user.uid}');
             if (user.metadata.creationTime == user.metadata.lastSignInTime) {
-              authService.signUpWithEmailAndPassword(user.email!, user.uid).then((_) {
+              authService
+                  .signUpWithEmailAndPassword(user.email!, user.uid)
+                  .then((_) {
                 print('New user data written to Firestore');
               }).catchError((error) {
                 print('Error writing new user data to Firestore: $error');
@@ -72,8 +85,8 @@ class LoginScreen extends StatelessWidget {
               });
             }
           }
-          Future.microtask(() =>
-              Navigator.of(context).pushReplacementNamed(AppRoutes.bRingDashScreen));
+          Future.microtask(() => Navigator.of(context)
+              .pushReplacementNamed(AppRoutes.bRingDashScreen));
           // Return a placeholder widget to satisfy the builder function.
           // This widget is temporary and won't be visible to the user due to the navigation.
           return Container();
@@ -91,7 +104,8 @@ Future<UserCredential> signInWithGoogle() async {
   final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
   // Obtain the auth details from the request
-  final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+  final GoogleSignInAuthentication? googleAuth =
+      await googleUser?.authentication;
 
   // Create a new credential
   final OAuthCredential credential = GoogleAuthProvider.credential(

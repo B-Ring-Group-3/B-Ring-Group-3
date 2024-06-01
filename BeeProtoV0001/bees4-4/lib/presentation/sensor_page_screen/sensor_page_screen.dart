@@ -49,8 +49,10 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20),
+              _buildTitle('Robot Temp and Humidity'),
               _buildSensorInfo(context, 'Robot Temp and Humidity', connectToViam), // Add the new section here
               SizedBox(height: 20),
+              _buildTitle('Robot Power'),
               _buildSensorInfo(context, 'Robot Power', connectToViam2), // Add the new section here
             ],
           ),
@@ -71,82 +73,77 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
       future: connectFunction(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
+          return Text('Error: ${snapshot.error}');
         } else {
-          // Extract data based on the title
-          double temperature = 0.0;
-          double humidity = 0.0;
-          double power = 0.0;
 
-          if (title == 'Robot Temp and Humidity') {
-            Map<String, dynamic> sensorDataTempHum = snapshot.data as Map<String, dynamic>;
-            temperature = sensorDataTempHum["temperature_celsius"] ?? 0.0;
-            humidity = double.parse((sensorDataTempHum["relative_humidity_pct"] ?? 0.0).toStringAsFixed(2));
+          // Display data based on the type of sensor
+          return _buildSensorData(context, title, snapshot.data);
 
-          } else if (title == 'Robot Power') {
-            double sensorDataHum = snapshot.data as double;
-            power = double.parse(sensorDataHum.toStringAsFixed(2));
-            power *= 100;
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-               // if(title == "Robot Power")
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                // Display temperature and humidity if title is 'Robot Temp'
-                if (title == 'Robot Temp and Humidity') ...[
-                  Text(
-                    'Temperature:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    '${temperature.toStringAsFixed(2)} °C',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Humidity:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    '$humidity %',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-                // Display power if title is 'Robot Power'
-                if (title == 'Robot Power') ...[
-                  Text(
-                    'Power:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    '$power %',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-              ],
-            ),
-          );
         }
       },
     );
   }
 
+  Widget _buildSensorData(BuildContext context, String title, dynamic data) {
+  var cardColor = Colors.white;
+  IconData iconData;
+  List<Widget> content = [];
 
+  if (title == 'Robot Power' && data is double) {
+    cardColor = Colors.blue[100]!;
+    iconData = Icons.flash_on;
+    content.add(Text('Power: ${data.toStringAsFixed(2)} %', style: TextStyle(fontSize: 18)));
+  } else if (title != 'Robot Power' && data is Map<String, dynamic>) {
+    cardColor = Colors.green[100]!;
+    iconData = Icons.thermostat;
+    double temperature = data["temperature_celsius"] ?? 0.0;
+    double humidity = data["humidity_percent"] ?? 0.0;
+    content.addAll([
+      Text('Temperature: ${temperature.toStringAsFixed(2)} °C', style: TextStyle(fontSize: 18)),
+      Text('Humidity: ${humidity.toStringAsFixed(2)} %', style: TextStyle(fontSize: 18))
+    ]);
+  } else {
+    iconData = Icons.error_outline;
+    content.add(Text('Unexpected data type'));
   }
+
+  return Card(
+    color: cardColor,
+    elevation: 4.0,
+    margin: EdgeInsets.all(8.0),
+    child: ListTile(
+      leading: Icon(iconData, size: 30.0),
+      title: Column(children: content),
+    ),
+  );
+}
+
+}
+
+Widget _buildTitle(String title) {
+  return Container(
+    padding: const EdgeInsets.all(10.0),
+    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5.0),  // Adjusted margin for horizontal alignment
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 255, 210, 64),
+      borderRadius: BorderRadius.circular(0),  // Adjusted for full-width
+    ),
+    width: double.infinity,  // Ensures the container takes full width
+    child: Text(
+      title,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    ),
+  );
+}
+
+
+  
   
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
@@ -281,37 +278,59 @@ Future<Map<String, dynamic>> connectToViam() async {
   final apiKeyId = robotData['apiKeyId'];
   final apiKey = robotData['apiKey'];
 
-  RobotClient robot;
-  try {
-    robot = await RobotClient.atAddress(host, RobotClientOptions.withApiKey(apiKeyId, apiKey));
-    Sensor temp = Sensor.fromRobot(robot, "temp");
-    Map<String, dynamic> tempReturnValue = await temp.readings();
-    double temperature = tempReturnValue["temperature_celsius"] ?? 0.0;
+  DocumentSnapshot robotDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('robots')
+      .doc('robot')
+      .get();
 
-    // Now, instead of adding the temperature to the robot document, add it to the temperatures collection
-    var temperatureDocRef = FirebaseFirestore.instance
+  if (!robotDoc.exists) {
+    throw Exception('Robot data not found for user ${user.uid}');
+  }
+
+  Map<String, dynamic> robotData = robotDoc.data() as Map<String, dynamic>;
+  final host = robotData['host'];
+  final apiKeyId = robotData['apiKeyId'];
+  final apiKey = robotData['apiKey'];
+
+  RobotClient robot = await RobotClient.atAddress(host, RobotClientOptions.withApiKey(apiKeyId, apiKey));
+  try {
+
+    // Attempt to get readings from both sensors
+    Sensor tempSensor = Sensor.fromRobot(robot, "temp");
+    Sensor humiditySensor = Sensor.fromRobot(robot, "temp");
+
+    Map<String, dynamic> tempData = await tempSensor.readings();
+    Map<String, dynamic> humidityData = await humiditySensor.readings();
+
+    double temperature = tempData["temperature_celsius"] ?? 0.0;
+    double humidity = humidityData["relative_humidity_pct"] ?? 0.0;
+
+    var sensorDataRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .collection('robots')
         .doc('robot')
-        .collection('temperatures')
-        .doc();  // Firestore generates a unique ID for each temperature record
+        .collection('sensorData')
+        .doc();
 
-    await temperatureDocRef.set({
+    await sensorDataRef.set({
       'temperature_celsius': temperature,
-      'timestamp': FieldValue.serverTimestamp()  // Use server timestamp to ensure consistency
+      'humidity_percent': humidity,
+      'timestamp': FieldValue.serverTimestamp()
     });
 
-    // Close the robot connection
-    try {
-      await robot.close();
-    } catch (e) {
-      print('Error closing robot connection: $e');
-    }
-
-    return tempReturnValue;
+    await robot.close();
+    return {
+      'temperature_celsius': temperature,
+      'humidity_percent': humidity
+    };
   } catch (e) {
-    print("Error connecting to Viam: $e");
+
+    await robot.close();
+    print("Error while reading from sensors or writing to Firestore: $e");
+
     throw e;
   }
 }
@@ -376,78 +395,4 @@ Future<double> connectToViam2() async {
   }
 }
 
-
-// Widget _buildMiddle(BuildContext context) {
-//     return FutureBuilder(
-//       future: connectToViam(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           // The connection is complete, you can access the result
-//           return Container(
-//             color: Colors.blue,
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Connected to Viam. Robot temp: ${snapshot.data}',
-//
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else if (snapshot.hasError) {
-//           // If there's an error during the connection, handle it here
-//           return Container(
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Error connecting to Viam: ${snapshot.error}',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else {
-//           // While the connection is in progress, show a loading indicator
-//           return Container(
-//               padding: EdgeInsets.all(16),
-//               margin: EdgeInsets.all(16),
-//               child: CircularProgressIndicator()
-//           );
-//           // return CircularProgressIndicator();
-//         }
-//       },
-//     );
-//   }
-//
-//   Widget _buildMiddle2(BuildContext context) {
-//     return FutureBuilder(
-//       future: connectToViam2(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           // The connection is complete, you can access the result
-//           return Container(
-//             color: Colors.red,
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Connected to Viam. Robot Power: ${snapshot.data}',
-//
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else if (snapshot.hasError) {
-//           // If there's an error during the connection, handle it here
-//           return Container(
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Error connecting to Viam: ${snapshot.error}',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else {
-//           // While the connection is in progress, show a loading indicator
-//           return Container(
-//               padding: EdgeInsets.all(16),
-//               margin: EdgeInsets.all(16),
-//               child: CircularProgressIndicator()
-//           );
-//           // return CircularProgressIndicator();
-//         }
-//       },
-//     );
-//   }
 

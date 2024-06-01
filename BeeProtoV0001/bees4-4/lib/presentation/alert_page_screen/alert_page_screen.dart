@@ -6,13 +6,119 @@ import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 // Import the created search delegate
 import 'package:bees4/core/utils/help_search_delegate.dart';
+
 //import 'package:viam_sdk/protos/service/data_manager.dart';
 import 'package:bees4/env.dart';
+
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
+//import 'package:viam_sdk/widgets.dart';
+import 'package:bees4/env.dart';
 
+//import 'dart:io';
+//import 'dart:math';
+//import 'dart:typed_data';
+
+//import 'package:async/async.dart';
+//import 'package:collection/collection.dart';
+//import 'package:fixnum/fixnum.dart';
+//import 'package:viam_sdk/src/gen/google/protobuf/any.pb.dart';
+//import 'package:viam_sdk/src/utils.dart';
+/* 
+class DataClient {
+  final DataServiceClient _dataClient;
+  final DataServiceClient _dataSyncClient;
+
+  DataClient(this._dataClient, this._dataSyncClient);
+
+  DataRequest _makeDataRequest(Filter? filter, int? limit, String? last, Order? sortOrder) {
+    final dataRequest = DataRequest();
+    dataRequest.filter = filter ?? Filter();
+    if (limit != null) {
+      dataRequest.limit = Int64(limit);
+    }
+    if (last != null) {
+      dataRequest.last = last;
+    }
+    if (sortOrder != null) {
+      dataRequest.sortOrder = sortOrder;
+    }
+    return dataRequest;
+  }
+
+  Future<TabularDataByFilterResponse> tabularDataByFilter({Filter? filter, int? limit, Order? sortOrder, countOnly = false}) async {
+    if (countOnly) {
+      final dataRequest = _makeDataRequest(filter, null, null, sortOrder);
+      final request = TabularDataByFilterRequest()
+        ..dataRequest = dataRequest
+        ..countOnly = true;
+      return await _dataClient.tabularDataByFilter(request);
+    }
+
+    final finalResponse = TabularDataByFilterResponse();
+    limit ??= 1 << 32; // if no limit, set to max 32bit unsigned int
+
+    while (finalResponse.count < limit) {
+      final dataRequest = _makeDataRequest(filter, min(50, limit), finalResponse.last, sortOrder);
+      final request = TabularDataByFilterRequest()
+        ..dataRequest = dataRequest
+        ..countOnly = false;
+
+      final response = await _dataClient.tabularDataByFilter(request);
+
+      if (response.count == 0) {
+        break;
+      }
+
+      finalResponse.metadata.addAll(response.metadata);
+      finalResponse.data.addAll(response.data);
+      finalResponse.count += response.count;
+      finalResponse.last = response.last;
+    }
+
+    return finalResponse;
+  }
+
+   /// Filter and download binary data
+  /// If a [filter] is not provided, then all data will be returned.
+  /// If a [limit] is provided, the data returned will contain at most that amount data. Otherwise, all data will be returned.
+  Future<BinaryDataByFilterResponse> binaryDataByFilter({Filter? filter, int? limit, Order? sortOrder, countOnly = false}) async {
+    if (countOnly) {
+      final dataRequest = _makeDataRequest(filter, null, null, sortOrder);
+      final request = BinaryDataByFilterRequest()
+        ..dataRequest = dataRequest
+        ..countOnly = true;
+      return await _dataClient.binaryDataByFilter(request);
+    }
+
+    final finalResponse = BinaryDataByFilterResponse();
+    limit ??= 1 << 32; // if no limit, set to max 32bit unsigned int
+
+    while (finalResponse.count < limit) {
+      final dataRequest = _makeDataRequest(filter, min(50, limit), finalResponse.last, sortOrder);
+      final request = BinaryDataByFilterRequest()
+        ..dataRequest = dataRequest
+        ..countOnly = false;
+
+      final response = await _dataClient.binaryDataByFilter(request);
+
+      if (response.count == 0) {
+        break;
+      }
+
+      finalResponse.data.addAll(response.data);
+      finalResponse.count += response.count;
+      finalResponse.last = response.last;
+    }
+
+    return finalResponse;
+  }
+
+}
+*/
 // Global const values for thresholds at which an alert will be issued.
 // These values are based on information from this website:
 // https://www.bee-mindful.com/post/2020/08/03/pros-and-cons-of-helping-bees-with-temperature-and-humidity-control-within-the-hive#:~:text=On%20the%20other%20hand%2C%20bees,will%20prevent%20healthy%20brood%20rearing.
@@ -239,7 +345,6 @@ Future<Map<String, dynamic>> connectToViam() async {
   const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
   String theApiKeyId = Env.apiKeyId;  //'d8fc8e31-8cc0-45c6-9cc4-631a952d97af';
   String theApiKey = Env.apiKey;  //'5yjnbxukpi671quprcbhu55qfjt00zp4';
-
 
   RobotClient robot;
   try {

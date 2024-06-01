@@ -364,7 +364,7 @@ Future<double> connectToViam2() async {
   try {
     robot = await RobotClient.atAddress(
       host,
-      RobotClientOptions.withApiKey(apiKeyId, apiKey),
+      RobotClientOptions.withApiKey(theApiKeyId, theApiKey),
     );
 
     var solarChannel = PowerSensor.fromRobot(robot, "solarChannel");

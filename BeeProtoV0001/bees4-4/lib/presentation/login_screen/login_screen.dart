@@ -87,6 +87,7 @@ class LoginScreen extends StatelessWidget {
           }
           Future.microtask(() => Navigator.of(context)
               .pushReplacementNamed(AppRoutes.bRingDashScreen));
+
           // Return a placeholder widget to satisfy the builder function.
           // This widget is temporary and won't be visible to the user due to the navigation.
           return Container();

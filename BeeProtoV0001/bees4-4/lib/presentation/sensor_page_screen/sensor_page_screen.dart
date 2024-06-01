@@ -1,19 +1,23 @@
 import 'package:bees4/core/app_export.dart';
-//import 'package:bees4/widgets/app_bar/appbar_leading_image.dart';
 import 'package:bees4/widgets/app_bar/appbar_title.dart';
-//import 'package:bees4/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // Import the created search delegate
 import 'package:bees4/core/utils/help_search_delegate.dart';
-//import 'package:viam_sdk/protos/service/data_manager.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-// Step 1: Import the viam_sdk
+//  Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
-//import 'package:viam_sdk/widgets.dart';
 
+// The sensor page connects to all sensors available on the beering smart device 
+// and displays their readings. The Temp and Humidity readings are stored in the 
+// Firebase DB along with a timestamp that comes from the server upload time
+
+//This builds the sensor page itself. Because the data may change through a refresh
+// The widget must be stateful as opposed to stateless
 class SensorPageScreen extends StatefulWidget {
   SensorPageScreen({Key? key}) : super(key: key);
 
@@ -23,17 +27,15 @@ class SensorPageScreen extends StatefulWidget {
 
 class _SensorPageScreenState extends State<SensorPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
-//class SensorPageScreen extends StatelessWidget {
-//SensorPageScreen({Key? key}) : super(key: key);
-//final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  
 // Method to refresh the data
   Future<void> _refreshData() async {
     setState(() {
       // Add any logic here to refresh the data
     });
   }
-
+// This widget builds out elements on the sensors page, by calling other widgets that process
+// The data
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -45,8 +47,10 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 20),
+              _buildTitle('Robot Temp and Humidity'),
               _buildSensorInfo(context, 'Robot Temp and Humidity', connectToViam), // Add the new section here
               SizedBox(height: 20),
+              _buildTitle('Robot Power'),
               _buildSensorInfo(context, 'Robot Power', connectToViam2), // Add the new section here
             ],
           ),
@@ -61,89 +65,86 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
       ),
     );
   }
-
+// This widget builds the sensor info area returned from viam
+// and provides a progress indicator. Error checking accounts for 
+// inconsistant bot connection
   Widget _buildSensorInfo(BuildContext context, String title, Function() connectFunction) {
     return FutureBuilder(
       future: connectFunction(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(
-            child: CircularProgressIndicator(),
-          );
+          return CircularProgressIndicator();
         } else if (snapshot.hasError) {
-          return Center(
-            child: Text('Error: ${snapshot.error}'),
-          );
+          return Text('Error: ${snapshot.error}');
         } else {
-          // Extract data based on the title
-          double temperature = 0.0;
-          double humidity = 0.0;
-          double power = 0.0;
-
-          if (title == 'Robot Temp and Humidity') {
-            Map<String, dynamic> sensorDataTempHum = snapshot.data as Map<String, dynamic>;
-            temperature = double.parse((sensorDataTempHum["temperature_celcius"] ?? 0.0).toStringAsFixed(2));
-            humidity = double.parse((sensorDataTempHum["relative_humidity_pct"] ?? 0.0).toStringAsFixed(2));
-
-          } else if (title == 'Robot Power') {
-            double sensorDataHum = snapshot.data as double;
-            power = double.parse(sensorDataHum.toStringAsFixed(2));
-            power *= 100;
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-               // if(title == "Robot Power")
-                Text(
-                  title,
-                  style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 10),
-                // Display temperature and humidity if title is 'Robot Temp'
-                if (title == 'Robot Temp and Humidity') ...[
-                  Text(
-                    'Temperature:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    '$temperature °C',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  SizedBox(height: 10),
-                  Text(
-                    'Humidity:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    '$humidity %',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-                // Display power if title is 'Robot Power'
-                if (title == 'Robot Power') ...[
-                  Text(
-                    'Power:',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                  Text(
-                    '$power %',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ],
-              ],
-            ),
-          );
+          // Display data based on the type of sensor
+          return _buildSensorData(context, title, snapshot.data);
         }
       },
     );
   }
+// This widget display data returned when it exists
+  Widget _buildSensorData(BuildContext context, String title, dynamic data) {
+  var cardColor = Colors.white;
+  IconData iconData;
+  List<Widget> content = [];
 
-
+  if (title == 'Robot Power' && data is double) {
+    cardColor = Colors.blue[100]!;
+    iconData = Icons.flash_on;
+    double powerPercentage = data * 100;
+    content.add(Text('Power: ${powerPercentage.toStringAsFixed(2)} %', style: TextStyle(fontSize: 18)));
+  } else if (title != 'Robot Power' && data is Map<String, dynamic>) {
+    cardColor = Colors.green[100]!;
+    iconData = Icons.thermostat;
+    double temperature = data["temperature_celsius"] ?? 0.0;  //spelled like they are as returned by viam
+    double humidity = data["humidity_percent"] ?? 0.0;
+    content.addAll([
+      Text('Temperature: ${temperature.toStringAsFixed(2)} °C', style: TextStyle(fontSize: 18)),
+      Text('Humidity: ${humidity.toStringAsFixed(2)} %', style: TextStyle(fontSize: 18))
+    ]);
+  } else {
+    iconData = Icons.error_outline;
+    content.add(Text('Unexpected data type'));
   }
+
+  return Card(
+    color: cardColor,
+    elevation: 4.0,
+    margin: EdgeInsets.all(8.0),
+    child: ListTile(
+      leading: Icon(iconData, size: 30.0),
+      title: Column(children: content),
+    ),
+  );
+}
+
+}
+
+// This widget can be called to build title areas 
+Widget _buildTitle(String title) {
+  return Container(
+    padding: const EdgeInsets.all(10.0),
+    margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 5.0),  // Adjusted margin for horizontal alignment
+    decoration: BoxDecoration(
+      color: const Color.fromARGB(255, 255, 210, 64),
+      borderRadius: BorderRadius.circular(0),  // Adjusted for full-width
+    ),
+    width: double.infinity,  // Ensures the container takes full width
+    child: Text(
+      title,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.black,
+      ),
+    ),
+  );
+}
+
+
   
+  // This widget can be called to build the app drawer settings menu
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
@@ -254,55 +255,98 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
     Navigator.pop(context);
   }
 
-// Step 2: Call this function from within your widget
+// Call this function from within your widget
+// This Function connects to viam and the firebase DB. The DB will provide api
+// info for valid users and connect to a collection setup for that user in the DB
+// Data returned from viam is sent to the DB and returned to build widgets to display 
+// in the page
 Future<Map<String, dynamic>> connectToViam() async {
-  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  final User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    throw Exception('No user signed in.');
+  }
 
-  RobotClient robot;
+  DocumentSnapshot robotDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('robots')
+      .doc('robot')
+      .get();
+
+  if (!robotDoc.exists) {
+    throw Exception('Robot data not found for user ${user.uid}');
+  }
+
+  Map<String, dynamic> robotData = robotDoc.data() as Map<String, dynamic>;
+  final host = robotData['host'];
+  final apiKeyId = robotData['apiKeyId'];
+  final apiKey = robotData['apiKey'];
+
+  RobotClient robot = await RobotClient.atAddress(host, RobotClientOptions.withApiKey(apiKeyId, apiKey));
   try {
-    robot = await RobotClient.atAddress(
-      host,
-      RobotClientOptions.withApiKey(apiKeyId, apiKey),
-    );
-    print("\n------------------Printing resources-----------------------\n");
-    print(robot.resourceNames);
+    // Attempt to get readings from both sensors
+    Sensor tempSensor = Sensor.fromRobot(robot, "temp");
+    Sensor humiditySensor = Sensor.fromRobot(robot, "temp");
 
-    Sensor temp = Sensor.fromRobot(robot, "temp");
-    Map<String, dynamic> tempReturnValue =
-        await temp.readings(); // Await the result
-    print("temp get_readings return value: ");
-    print(tempReturnValue);
+    Map<String, dynamic> tempData = await tempSensor.readings();
+    Map<String, dynamic> humidityData = await humiditySensor.readings();
 
-    // Attempt to close the connection with retry logic
-    const int maxAttempts = 3;
-    int attempts = 0;
-    while (attempts < maxAttempts) {
-      try {
-        await robot.close();
-        await Future.delayed(Duration(seconds: 5));
-        print('Next information-->');
-        break; // Exit the loop if close operation is successful
-      } catch (e) {
-        print(
-            'Error closing robot connection (attempt ${attempts + 1}/$maxAttempts): $e');
-        attempts++; // Increment attempts counter
-        await Future.delayed(Duration(seconds: 1)); // Delay before retrying
-      }
-    }
+    double temperature = tempData["temperature_celsius"] ?? 0.0;
+    double humidity = humidityData["relative_humidity_pct"] ?? 0.0;
 
-    return tempReturnValue;
+    var sensorDataRef = FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .collection('robots')
+        .doc('robot')
+        .collection('sensorData')
+        .doc();
+
+    await sensorDataRef.set({
+      'temperature_celsius': temperature,
+      'humidity_percent': humidity,
+      'timestamp': FieldValue.serverTimestamp()
+    });
+
+    await robot.close();
+    return {
+      'temperature_celsius': temperature,
+      'humidity_percent': humidity
+    };
   } catch (e) {
-    print("Error connecting to Viam: $e");
-    throw e; // Re-throw the error to be handled by the caller
+    await robot.close();
+    print("Error while reading from sensors or writing to Firestore: $e");
+    throw e;
   }
 }
 
+
+// This Function connects to viam and the firebase DB. The DB will provide api
+// info for valid users and connect to a collection setup for that user in the DB
+// Data returned from viam is just returned to build widgets to be 
+//// displayed and the DB is not setup to store it
 Future<double> connectToViam2() async {
-  const host = 'appdev1-main.v46c8jmy3x.viam.cloud';
-  const apiKeyId = 'd8fc8e31-8cc0-45c6-9cc4-631a952d97af';
-  const apiKey = '5yjnbxukpi671quprcbhu55qfjt00zp4';
+  final User? user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    throw Exception('No user signed in.');
+  }
+
+  DocumentSnapshot robotDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('robots')
+      .doc('robot')
+      .get();
+
+  if (!robotDoc.exists) {
+    throw Exception('Robot data not found for user ${user.uid}');
+  }
+
+  Map<String, dynamic> robotData = robotDoc.data() as Map<String, dynamic>;
+
+  final host = robotData['host'];
+  final apiKeyId = robotData['apiKeyId'];
+  final apiKey = robotData['apiKey'];
 
   await Future.delayed(Duration(seconds: 5));
   RobotClient robot;
@@ -340,78 +384,4 @@ Future<double> connectToViam2() async {
   }
 }
 
-
-// Widget _buildMiddle(BuildContext context) {
-//     return FutureBuilder(
-//       future: connectToViam(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           // The connection is complete, you can access the result
-//           return Container(
-//             color: Colors.blue,
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Connected to Viam. Robot temp: ${snapshot.data}',
-//
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else if (snapshot.hasError) {
-//           // If there's an error during the connection, handle it here
-//           return Container(
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Error connecting to Viam: ${snapshot.error}',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else {
-//           // While the connection is in progress, show a loading indicator
-//           return Container(
-//               padding: EdgeInsets.all(16),
-//               margin: EdgeInsets.all(16),
-//               child: CircularProgressIndicator()
-//           );
-//           // return CircularProgressIndicator();
-//         }
-//       },
-//     );
-//   }
-//
-//   Widget _buildMiddle2(BuildContext context) {
-//     return FutureBuilder(
-//       future: connectToViam2(),
-//       builder: (context, snapshot) {
-//         if (snapshot.connectionState == ConnectionState.done) {
-//           // The connection is complete, you can access the result
-//           return Container(
-//             color: Colors.red,
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Connected to Viam. Robot Power: ${snapshot.data}',
-//
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else if (snapshot.hasError) {
-//           // If there's an error during the connection, handle it here
-//           return Container(
-//             padding: EdgeInsets.all(16),
-//             child: Text(
-//               'Error connecting to Viam: ${snapshot.error}',
-//               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-//             ),
-//           );
-//         } else {
-//           // While the connection is in progress, show a loading indicator
-//           return Container(
-//               padding: EdgeInsets.all(16),
-//               margin: EdgeInsets.all(16),
-//               child: CircularProgressIndicator()
-//           );
-//           // return CircularProgressIndicator();
-//         }
-//       },
-//     );
-//   }
 

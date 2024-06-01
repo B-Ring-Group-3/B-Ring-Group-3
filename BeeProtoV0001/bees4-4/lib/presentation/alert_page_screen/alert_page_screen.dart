@@ -11,7 +11,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bees4/core/utils/help_search_delegate.dart';
 
 //import 'package:viam_sdk/protos/service/data_manager.dart';
-//import 'package:viam_sdk/protos/app/data.dart'; // Assuming Filter is defined here
+import 'package:bees4/env.dart';
+
 // Step 1: Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
 //import 'package:viam_sdk/widgets.dart';

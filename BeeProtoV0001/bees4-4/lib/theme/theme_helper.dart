@@ -61,21 +61,33 @@ class ThemeHelper {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          backgroundColor: Colors.transparent,
+          foregroundColor: Colors.black,
+          backgroundColor: colorScheme.primary,
           side: BorderSide(
             color: appTheme.black900,
             width: 2.h,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30.h),
+            borderRadius: BorderRadius.circular(12.h),
           ),
           visualDensity: const VisualDensity(
             vertical: -4,
             horizontal: -4,
           ),
-          padding: EdgeInsets.zero,
+          padding: EdgeInsets.all(30),
+          textStyle: TextStyle(
+            fontSize: 24,
+          )
         ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.secondary,
+          textStyle: TextStyle(
+            fontSize: 20,
+          )
+        )
+      )
     );
   }
 
@@ -140,6 +152,7 @@ class ColorSchemes {
   static final primaryColorScheme = ColorScheme.light(
     // Primary colors
     primary: Color(0XFFFFD233),
+    secondary: Color.fromARGB(255, 184, 136, 4),
     primaryContainer: Color(0XFF31373D),
     secondaryContainer: Color(0XFFFFC600),
 

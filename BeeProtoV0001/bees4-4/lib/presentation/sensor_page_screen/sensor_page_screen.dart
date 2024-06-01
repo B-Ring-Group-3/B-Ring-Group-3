@@ -77,8 +77,10 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
+
           // Display data based on the type of sensor
           return _buildSensorData(context, title, snapshot.data);
+
         }
       },
     );
@@ -276,8 +278,25 @@ Future<Map<String, dynamic>> connectToViam() async {
   final apiKeyId = robotData['apiKeyId'];
   final apiKey = robotData['apiKey'];
 
+  DocumentSnapshot robotDoc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(user.uid)
+      .collection('robots')
+      .doc('robot')
+      .get();
+
+  if (!robotDoc.exists) {
+    throw Exception('Robot data not found for user ${user.uid}');
+  }
+
+  Map<String, dynamic> robotData = robotDoc.data() as Map<String, dynamic>;
+  final host = robotData['host'];
+  final apiKeyId = robotData['apiKeyId'];
+  final apiKey = robotData['apiKey'];
+
   RobotClient robot = await RobotClient.atAddress(host, RobotClientOptions.withApiKey(apiKeyId, apiKey));
   try {
+
     // Attempt to get readings from both sensors
     Sensor tempSensor = Sensor.fromRobot(robot, "temp");
     Sensor humiditySensor = Sensor.fromRobot(robot, "temp");
@@ -308,12 +327,13 @@ Future<Map<String, dynamic>> connectToViam() async {
       'humidity_percent': humidity
     };
   } catch (e) {
+
     await robot.close();
     print("Error while reading from sensors or writing to Firestore: $e");
+
     throw e;
   }
 }
-
 
 
 Future<double> connectToViam2() async {

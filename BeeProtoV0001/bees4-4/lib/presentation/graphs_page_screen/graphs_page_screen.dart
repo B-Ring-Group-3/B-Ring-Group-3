@@ -39,6 +39,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   Future<void> _refreshData() async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user != null) {
+
     QuerySnapshot snapshot = await FirebaseFirestore.instance
       .collection('users')
       .doc(user.uid)
@@ -48,6 +49,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
       .orderBy('timestamp', descending: true)
       .limit(180)
       .get();
+
 
     if (snapshot.docs.isEmpty) {
       print('No data found.');
@@ -77,8 +79,6 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     print('No user signed in.');
   }
 }
-
-
 
   List<FlSpot> tempData = [
     FlSpot(0, 65),
@@ -302,6 +302,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   }
 
   Widget _buildGraph(BuildContext context, bool temp, bool humid) {
+
   return Center(
     child: Container(
       padding: const EdgeInsets.all(16),

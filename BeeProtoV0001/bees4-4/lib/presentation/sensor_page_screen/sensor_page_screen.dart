@@ -296,7 +296,6 @@ Future<Map<String, dynamic>> connectToViam() async {
 
   RobotClient robot = await RobotClient.atAddress(host, RobotClientOptions.withApiKey(apiKeyId, apiKey));
   try {
-
     // Attempt to get readings from both sensors
     Sensor tempSensor = Sensor.fromRobot(robot, "temp");
     Sensor humiditySensor = Sensor.fromRobot(robot, "temp");

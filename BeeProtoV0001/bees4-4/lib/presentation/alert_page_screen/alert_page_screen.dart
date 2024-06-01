@@ -119,6 +119,7 @@ class DataClient {
 
 }
 */
+
 // Global const values for thresholds at which an alert will be issued.
 // These values are based on information from this website:
 // https://www.bee-mindful.com/post/2020/08/03/pros-and-cons-of-helping-bees-with-temperature-and-humidity-control-within-the-hive#:~:text=On%20the%20other%20hand%2C%20bees,will%20prevent%20healthy%20brood%20rearing.
@@ -126,6 +127,7 @@ const double TEMP_UPPER_LIMIT = 35.5;
 const double TEMP_LOWER_LIMIT = 32.0;
 const double HUMID_UPPER_LIMIT = 60.0;
 const double HUMID_LOWER_LIMIT = 50.0;
+
 
 class AlertPageScreen extends StatefulWidget {
   AlertPageScreen({Key? key}) : super(key: key);

@@ -1,22 +1,16 @@
 import 'package:bees4/core/app_export.dart';
-//import 'package:bees4/widgets/app_bar/appbar_leading_image.dart';
 import 'package:bees4/widgets/app_bar/appbar_title.dart';
-//import 'package:bees4/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-// Import the created search delegate
-//import 'package:bees4/core/utils/help_search_delegate.dart';
-//import 'package:viam_sdk/protos/service/data_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:bees4/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:math';
+import 'package:fl_chart/fl_chart.dart';
 
-// Step 1: Import the viam_sdk
-import 'package:viam_sdk/viam_sdk.dart';
-//import 'package:viam_sdk/widgets.dart';
+// The graphs screen connects to the firebase DB and pulls the sensor data
+// Into the static arrays defined below. 
 
 class GraphsPageScreen extends StatefulWidget {
   GraphsPageScreen({Key? key}) : super(key: key);
@@ -34,28 +28,24 @@ List<FlSpot> chartData = [];
 class _GraphsPageScreenState extends State<GraphsPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
+// refreshData connects to the DB when the user clicks a refresh button on the bottom right
 
-//class GraphsPageScreen extends StatelessWidget {
-//  GraphsPageScreen({Key? key}) : super(key: key);
-//  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Future<void> _refreshData() async {
   User? user = FirebaseAuth.instance.currentUser;
   if (user != null) {
-
     QuerySnapshot snapshot = await FirebaseFirestore.instance
       .collection('users')
       .doc(user.uid)
       .collection('robots')
       .doc('robot') // Assuming 'robot' is the ID of the specific robot
       .collection('sensorData')
-      .orderBy('timestamp', descending: true)
-      .limit(180)
+      .orderBy('timestamp', descending: false) //descending since we want to order from recent data 
+      .limit(180)    // adjust .limit(n) this as needed to fetch n data points
       .get();
-
 
     if (snapshot.docs.isEmpty) {
       print('No data found.');
-    } else {
+    } else {       // Store the data in new static arrays
       List<FlSpot> newTempData = [];
       List<FlSpot> newHumidData = [];
       int index = 0;
@@ -73,7 +63,7 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
       print('Total data points fetched: ${newTempData.length}'); // Logging total points
 
       setState(() {
-        tempData = newTempData;
+        tempData = newTempData;       // overwrite fake template data
         humidData = newHumidData;
       });
     }
@@ -81,6 +71,8 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
     print('No user signed in.');
   }
 }
+
+
 
   List<FlSpot> tempData = [
     FlSpot(0, 65),
@@ -145,58 +137,43 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   }
 
   Widget _buildDrawer(BuildContext context) {
-  return Drawer(
-    child: ListView(
-      padding: EdgeInsets.zero,
-      children: [
-        DrawerHeader(
-          decoration: BoxDecoration(
-            color: Color.fromRGBO(255, 210, 51, 1),
-          ),
-          child: Text(
-            'Graph Settings',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 24.0,
-              fontFamily: 'robotoBold',
-              shadows: [
-              Shadow(
-              color: Colors.black.withOpacity(0.5), // Adjust opacity and color as needed
-              offset: Offset(0, 2), // Adjust the offset based on your design
-              blurRadius: 4, // Adjust the blur radius based on your design
-        ),
-        ]
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            decoration: BoxDecoration(
+              color: Color.fromRGBO(255, 210, 51, 1),
+            ),
+            child: Text(
+              'Graph Settings',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.0,
+                  fontFamily: 'robotoBold',
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(
+                          0.5), // Adjust opacity and color as needed
+                      offset: Offset(
+                          0, 2), // Adjust the offset based on your design
+                      blurRadius:
+                          4, // Adjust the blur radius based on your design
+                    ),
+                  ]),
             ),
           ),
-        ),
-        ListTile(
-          title: Text('Change Graph'),
-          onTap: () {
-            // Handle item 1 tap
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: Text('Edit Range'),
-          onTap: () {
-            // Handle item 2 tap
-            Navigator.pop(context);
-          },
-        ),
-        ListTile(
-          title: Text('Export Data'),
-          onTap: () {
-            // Handle item 3 tap
-            Navigator.pop(context);
-          },
-        ),
-      ],
-    ),
-  );
-
-
-  
-}
+          ListTile(
+            title: Text('Export Data'),
+            onTap: () {
+              // Handle item 3 tap
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   /// Section Widget
   PreferredSizeWidget _buildAppBar(BuildContext context) {
@@ -215,19 +192,14 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         ),
       ),
       centerTitle: true,
-      title: AppbarTitle(text: "Graphs"),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.search),
-          onPressed: () {
-            showSearch(
-              context: context,
-              delegate: HelpSearchDelegate(),
-              query: 'Search Help Pages',
-            );
-          },
-        ),
-      ],
+      title: Row(
+        children: [
+          Spacer(),
+          AppbarTitle(text: "Graphs"),
+          Spacer(),
+          _buildRangeSelect(context),
+        ],
+      ),
       styleType: Style.bgFill,
     );
   }
@@ -324,7 +296,6 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
   }
 
   Widget _buildGraph(BuildContext context, bool temp, bool humid) {
-
   return Center(
     child: Container(
       padding: const EdgeInsets.all(16),
@@ -369,14 +340,14 @@ class _GraphsPageScreenState extends State<GraphsPageScreen> {
         setState(() {
           dropdownValue = newValue;
           days = newValue;
-          print("Dropdown selected: $days days");
+          print("Dropdown selected: $days Last Readings");
         });
       }
     },
     items: day_range.map<DropdownMenuItem<int>>((int value) {
       return DropdownMenuItem<int>(
         value: value,
-        child: Text('$value days'),
+        child: Text('$value Sensor Readings'),
       );
     }).toList(),
   );

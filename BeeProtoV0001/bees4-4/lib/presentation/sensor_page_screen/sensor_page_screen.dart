@@ -1,22 +1,23 @@
 import 'package:bees4/core/app_export.dart';
-//import 'package:bees4/widgets/app_bar/appbar_leading_image.dart';
 import 'package:bees4/widgets/app_bar/appbar_title.dart';
-//import 'package:bees4/widgets/app_bar/appbar_trailing_image.dart';
 import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 // Import the created search delegate
 import 'package:bees4/core/utils/help_search_delegate.dart';
-//import 'package:viam_sdk/protos/service/data_manager.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-//import 'package:bees4/firestore_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-// Step 1: Import the viam_sdk
+//  Import the viam_sdk
 import 'package:viam_sdk/viam_sdk.dart';
-//import 'package:viam_sdk/widgets.dart';
 
+// The sensor page connects to all sensors available on the beering smart device 
+// and displays their readings. The Temp and Humidity readings are stored in the 
+// Firebase DB along with a timestamp that comes from the server upload time
+
+//This builds the sensor page itself. Because the data may change through a refresh
+// The widget must be stateful as opposed to stateless
 class SensorPageScreen extends StatefulWidget {
   SensorPageScreen({Key? key}) : super(key: key);
 
@@ -26,18 +27,15 @@ class SensorPageScreen extends StatefulWidget {
 
 class _SensorPageScreenState extends State<SensorPageScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  //final FirestoreService _firestoreService = FirestoreService();
-
-//class SensorPageScreen extends StatelessWidget {
-//SensorPageScreen({Key? key}) : super(key: key);
-//final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  
 // Method to refresh the data
   Future<void> _refreshData() async {
     setState(() {
       // Add any logic here to refresh the data
     });
   }
-
+// This widget builds out elements on the sensors page, by calling other widgets that process
+// The data
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -67,7 +65,9 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
       ),
     );
   }
-
+// This widget builds the sensor info area returned from viam
+// and provides a progress indicator. Error checking accounts for 
+// inconsistant bot connection
   Widget _buildSensorInfo(BuildContext context, String title, Function() connectFunction) {
     return FutureBuilder(
       future: connectFunction(),
@@ -77,15 +77,13 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
-
           // Display data based on the type of sensor
           return _buildSensorData(context, title, snapshot.data);
-
         }
       },
     );
   }
-
+// This widget display data returned when it exists
   Widget _buildSensorData(BuildContext context, String title, dynamic data) {
   var cardColor = Colors.white;
   IconData iconData;
@@ -94,11 +92,12 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
   if (title == 'Robot Power' && data is double) {
     cardColor = Colors.blue[100]!;
     iconData = Icons.flash_on;
-    content.add(Text('Power: ${data.toStringAsFixed(2)} %', style: TextStyle(fontSize: 18)));
+    double powerPercentage = data * 100;
+    content.add(Text('Power: ${powerPercentage.toStringAsFixed(2)} %', style: TextStyle(fontSize: 18)));
   } else if (title != 'Robot Power' && data is Map<String, dynamic>) {
     cardColor = Colors.green[100]!;
     iconData = Icons.thermostat;
-    double temperature = data["temperature_celsius"] ?? 0.0;
+    double temperature = data["temperature_celsius"] ?? 0.0;  //spelled like they are as returned by viam
     double humidity = data["humidity_percent"] ?? 0.0;
     content.addAll([
       Text('Temperature: ${temperature.toStringAsFixed(2)} °C', style: TextStyle(fontSize: 18)),
@@ -122,6 +121,7 @@ class _SensorPageScreenState extends State<SensorPageScreen> {
 
 }
 
+// This widget can be called to build title areas 
 Widget _buildTitle(String title) {
   return Container(
     padding: const EdgeInsets.all(10.0),
@@ -144,7 +144,7 @@ Widget _buildTitle(String title) {
 
 
   
-  
+  // This widget can be called to build the app drawer settings menu
   Widget _buildDrawer(BuildContext context) {
     return Drawer(
       child: ListView(
@@ -255,28 +255,16 @@ Widget _buildTitle(String title) {
     Navigator.pop(context);
   }
 
-// Step 2: Call this function from within your widget
+// Call this function from within your widget
+// This Function connects to viam and the firebase DB. The DB will provide api
+// info for valid users and connect to a collection setup for that user in the DB
+// Data returned from viam is sent to the DB and returned to build widgets to display 
+// in the page
 Future<Map<String, dynamic>> connectToViam() async {
   final User? user = FirebaseAuth.instance.currentUser;
   if (user == null) {
     throw Exception('No user signed in.');
   }
-
-  DocumentSnapshot robotDoc = await FirebaseFirestore.instance
-      .collection('users')
-      .doc(user.uid)
-      .collection('robots')
-      .doc('robot')
-      .get();
-
-  if (!robotDoc.exists) {
-    throw Exception('Robot data not found for user ${user.uid}');
-  }
-
-  Map<String, dynamic> robotData = robotDoc.data() as Map<String, dynamic>;
-  final host = robotData['host'];
-  final apiKeyId = robotData['apiKeyId'];
-  final apiKey = robotData['apiKey'];
 
   DocumentSnapshot robotDoc = await FirebaseFirestore.instance
       .collection('users')
@@ -326,15 +314,17 @@ Future<Map<String, dynamic>> connectToViam() async {
       'humidity_percent': humidity
     };
   } catch (e) {
-
     await robot.close();
     print("Error while reading from sensors or writing to Firestore: $e");
-
     throw e;
   }
 }
 
 
+// This Function connects to viam and the firebase DB. The DB will provide api
+// info for valid users and connect to a collection setup for that user in the DB
+// Data returned from viam is just returned to build widgets to be 
+//// displayed and the DB is not setup to store it
 Future<double> connectToViam2() async {
   final User? user = FirebaseAuth.instance.currentUser;
   if (user == null) {
@@ -363,7 +353,7 @@ Future<double> connectToViam2() async {
   try {
     robot = await RobotClient.atAddress(
       host,
-      RobotClientOptions.withApiKey(theApiKeyId, theApiKey),
+      RobotClientOptions.withApiKey(apiKeyId, apiKey),
     );
 
     var solarChannel = PowerSensor.fromRobot(robot, "solarChannel");

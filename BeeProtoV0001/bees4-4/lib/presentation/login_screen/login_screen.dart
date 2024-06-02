@@ -1,7 +1,4 @@
 import 'package:bees4/core/app_export.dart';
-//import 'package:bees4/main.dart';
-//import 'package:bees4/widgets/custom_outlined_button.dart';
-//import 'package:bees4/widgets/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -14,15 +11,15 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color? login_primary_color = Color.fromARGB(255, 184, 136, 4);
+    final Color? loginPrimaryColor = Color.fromARGB(255, 184, 136, 4);
     final ThemeData theme = Theme.of(context);
     final loginTheme = theme.copyWith(
       colorScheme: theme.colorScheme.copyWith(
-        primary: login_primary_color,
+        primary: loginPrimaryColor,
       ),
       textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-        foregroundColor: login_primary_color,
+        foregroundColor: loginPrimaryColor,
       )),
     );
     return StreamBuilder<User?>(
@@ -87,7 +84,6 @@ class LoginScreen extends StatelessWidget {
           }
           Future.microtask(() => Navigator.of(context)
               .pushReplacementNamed(AppRoutes.bRingDashScreen));
-
           // Return a placeholder widget to satisfy the builder function.
           // This widget is temporary and won't be visible to the user due to the navigation.
           return Container();

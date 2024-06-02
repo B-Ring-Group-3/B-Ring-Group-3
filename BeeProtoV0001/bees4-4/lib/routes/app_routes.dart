@@ -7,6 +7,8 @@ import 'package:bees4/presentation/graphs_page_screen/graphs_page_screen.dart';
 import 'package:bees4/presentation/app_navigation_screen/app_navigation_screen.dart';
 import 'package:bees4/presentation/add_hive_screen/add_hive_screen.dart';
 
+// These are static routes that define how the apps screens connect. To add more screens
+// add more routes. Note how they get imported above
 class AppRoutes {
   static const String loginScreen = '/login_screen';
 

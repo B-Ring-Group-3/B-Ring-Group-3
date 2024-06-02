@@ -1,7 +1,5 @@
 import 'package:bees4/core/app_export.dart';
-//import 'package:bees4/widgets/app_bar/appbar_leading_image.dart';
-import 'package:bees4/widgets/app_bar/appbar_subtitle.dart';
-//import 'package:bees4/widgets/app_bar/appbar_trailing_image.dart';
+import 'package:bees4/widgets/app_bar/appbar_title.dart';
 import 'package:bees4/widgets/app_bar/custom_app_bar.dart';
 import 'package:bees4/widgets/custom_elevated_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -116,7 +114,7 @@ class _BRingDashScreenState extends State<BRingDashScreen> with RouteAware {
         children: [
           Spacer(),
 
-          AppbarSubtitle(text: "Dashboard"),
+          AppbarTitle(text: "Dashboard"),
           Spacer(),
 
           SizedBox(width: 20), // Add some spacing between title and dropdown
@@ -307,90 +305,4 @@ class _BRingDashScreenState extends State<BRingDashScreen> with RouteAware {
     Navigator.popAndPushNamed(context, AppRoutes.loginScreen);
   }
 }
-
-
-
-///class DropdownMenuApp extends StatelessWidget {
-///  const DropdownMenuApp({super.key});
-
-/// @override
-/// Widget build(BuildContext context) {
-///   return MaterialApp(
-///   theme: ThemeData(useMaterial3: true),
-///  home: Scaffold(
-///    appBar: AppBar(title: const Text('DropdownMenu Sample')),
-///    body: const Center(
-///      child: DropdownMenuExample(),
-///     ),
-///    ),
-///  );
-/// }
-///}
-///
-/*const List<String> list = <String>['Hive 1', 'Hive 2', 'Hive 3', 'Add Hive'];
-
-class DropdownMenuExample extends StatefulWidget {
-  const DropdownMenuExample({super.key});
-
-  @override
-  State<DropdownMenuExample> createState() => _DropdownMenuExampleState();
-}
-
-class _DropdownMenuExampleState extends State<DropdownMenuExample> {
-  String? dropdownValue;
-  late Stream<QuerySnapshot> _robotStream;
-
-  @override
-  void initState() {
-    super.initState();
-    _robotStream = _getRobotStream();
-  }
-
-  Stream<QuerySnapshot> _getRobotStream() {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      return FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .collection('robots')
-          .snapshots();
-    }
-    return const Stream.empty();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _robotStream,
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return CircularProgressIndicator();
-        }
-
-        List<String> hives = snapshot.data!.docs.map((doc) {
-          return 'Hive ${doc.id}';
-        }).toList();
-
-        hives.add('Add Hive');
-
-        return DropdownButton<String>(
-          value: dropdownValue,
-          onChanged: (String? value) {
-            setState(() {
-              dropdownValue = value;
-            });
-            if (value == 'Add Hive') {
-              Navigator.pushNamed(context, AppRoutes.addHiveScreen);
-            }
-          },
-          items: hives.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        );
-      },
-    );
-  }*/
 
